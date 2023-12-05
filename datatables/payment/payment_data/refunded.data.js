@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { 
-    Partial,
+    Refunded,
     getOne,
     statusChange,
     // DeleteData,
@@ -37,7 +37,7 @@ import {
 
   const { Text,Paragraph } = Typography;
 
-export const Partial_data = () => {
+export const Refunded_data = () => {
     //managing state
     const [userRow, setUserRow] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -146,7 +146,7 @@ const fetchData = async (page, pageSize) => {
   const value1 = page
   const value2 = pageSize
       try {
-        const response = await Partial(value1,value2);
+        const response = await Refunded(value1,value2);
         const data = await response.data;
         setUserRow(data);
         setIsLoading(false);
@@ -348,7 +348,7 @@ const fetchData = async (page, pageSize) => {
               </Row>
             </Modal>
             
-            <Divider orientation="left"><h3 style={{color: "#FFD800"}}>Partial Payments</h3></Divider>   
+            <Divider orientation="left"><h3 style={{color: "#808080"}}>Refunded Payments</h3></Divider>     
                 <Table
                     columns={actionColumn}
                     dataSource={userRow?.rows}

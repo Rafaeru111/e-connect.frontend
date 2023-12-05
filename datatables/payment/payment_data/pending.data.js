@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { 
     Pending,
-    // addData,
-    // getOne,
+    getOne,
+    statusChange,
     // DeleteData,
     // updateData,
         } from "../../../api/payment/payment_manangement.api"
@@ -16,6 +16,7 @@ import {
     EyeOutlined,
     } from '@ant-design/icons';
 import Swal from 'sweetalert2'
+
 import utils from '../../../helpers/utils'
 
 
@@ -44,12 +45,6 @@ export const Pending_data = () => {
     const [current, setCurrent] = useState(1);
     const [currentPageSize, setcurrentPageSize] = useState(5);
     
-    //--------------| Add states |-------------------- 
-    const [addopen, setAddOpen] = useState(false);
-    const [confirmLoading, setConfirmLoading] = useState(false);
-    const [formAdd] = Form.useForm(); 
-
-
     //-----------------| View States |-----------------------------
     const [openView, setOpenView] = useState(false);
     const [openEditView, setOpenEditView] = useState(false);
@@ -58,35 +53,10 @@ export const Pending_data = () => {
 
 
 
-//     params: {
-//         application_id: { type: "string", optional: false },
-//         payment_method: { type: "string", optional: false },
-//         payment_amount: { type: "string", optional: false },
-//         description: { type: "string", optional: true },
-//         payment_date: { type: "string", optional: false },
-//     },
-    
-// /** @param {Context} ctx */
-
-// roles: ["admin", "client"],
-// async handler(ctx) {
-//     const user = ctx.meta.user
-//     const params = utils.getDate(ctx.params);
-//     const reference = utils.create_reference()
-//             const insert_data =   await this.adapter.insert({
-//                 ...params,
-//                 reference_code: reference,
-//                 client_id: user.id,
-//                 payment_status: "pending"
-//             });
-
-//         return insert_data
 
 
 //------------------| For Edit Value |------------------
 const [editId, seteditId] = useState('');
-const [category_name, setCategoryName] = useState('');
-const [category_description, setCategoryDescription] = useState('');
 
 
     const actionColumn = [
@@ -209,74 +179,6 @@ const fetchData = async (page, pageSize) => {
        }
       };
 
-//-----------------------------------------------------| HANDLE for Add MODALS |----------------------------------------------------------------
-const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicking the data
-                            //-------------------------| HANDLE for MODALS Submit |----------------------------- 
-     const handleSubmit = async (values) => {
-             try {
-              const { 
-                category_name, 
-                category_description, 
-              } = values;
-
-                  const response = await addData(
-                    category_name, 
-                    category_description, 
-                    );
-            
-                    if (response.status === 200) {
-                  
-                            setAddOpen(false);
-
-                            Swal.fire('Saved!', '', 'success')
-
-                            fetchData(1, currentPageSize);
-
-                            formAdd.resetFields();
-
-                      } else {
-                        Swal.fire({
-                          icon: "error",
-                          title: "Oops...",
-                          text: response.data.message,
-                        });
-                      }
-                } catch (error) {
-                  console.error("Error inserting user:", error);
-               }
-           };
-
-
-          const handleOk = () => {
-            setConfirmLoading(true)
-            formAdd
-                  .validateFields()
-                    .then((values) => {
-                      handleSubmit(values);
-                    })
-                    
-                  .catch((error) => {
-                    Swal.fire({
-                      icon: "error",
-                      title: "Oops...",
-                      text: "There is something in yur Input",
-                      error,
-                    });
-
-                    return Promise.reject(); // Prevents the modal from closing
-                  })
-                  
-                  .finally(() => {
-                    setAddOpen(true);
-                    setConfirmLoading(false);
-                  });
-              };
-
-          const handleCancel = () => {
-            console.log('Clicked cancel button');
-            setAddOpen(false);
-          };
-
 //-------------------------| HANDLE for MODALS Viewing |----------------------------- 
   const handleView = async (data) => {
     try {
@@ -291,47 +193,6 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
   };
 
 
-  //-------------------------| HANDLE for Delete Data |----------------------------- 
-  const handleDelete = async (id) => {
-    try {
-      const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: "delete-button",
-          cancelButton: "veiwButton1",
-        },
-        buttonsStyling: true,
-      });
-  
-      const result = await swalWithBootstrapButtons.fire({
-        title: "Are you sure?",
-        text: "You want to delete ?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Delete",
-        cancelButtonText: "Cancel",
-        reverseButtons: true,
-      });
-  
-      if (result.isConfirmed) {
-        // Make the axios delete request
-          const response = await DeleteData(id);
-            if (response.status === 200) {
-
-                swalWithBootstrapButtons.fire(
-                  "Deleted!",
-                  "Your file has been deleted.",
-                  "success"
-                );
-
-                fetchData(current, currentPageSize);
-        }
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        swalWithBootstrapButtons.fire("Cancelled", "Done", "error");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
 
  //-------------------------| HANDLE for MODALS Editing Viewing |----------------------------- 
@@ -347,62 +208,51 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
 
 
 
-    //-----------------------|Edit handling Techniques|-----------------------------
-    // const editChange = async (value, field) => {
-    //     const id = editId;
-    //     switch(field){
-    //         case 'category_name': 
-    //             setCategoryName(value)
-    //         break;
-
-    //         case 'category_description': 
-    //             setCategoryDescription(value)
-    //         break;
-            
-    //         default:
-    //             alert("Error Accessing Value")
-    //         break;
-    //     }
-       
-    //     try {
-    //         const data = {
-    //             id: id,
-    //             [field]: value
-    //         };
-    
-    //         const Dataresponse = await updateData(data);
-        
-    //             if (Dataresponse.status === 200) {
-    //                 Swal.fire({
-    //                     icon: "success",
-    //                     title: "Success!",
-    //                     text: "Successfully Edited",
-    //                 });
-        
-    //                 fetchData(current, currentPageSize); // Assuming the response object contains the data as an object
-    //             }
-    //     } catch (error) {
-    //         Swal.fire({
-    //             icon: "error",
-    //             title: "Respond 500",
-    //             text: error,
-    //         });
-    //     }
-    // };
+  //-------------------------| HANDLE for Delete Data |----------------------------- 
+  const handleStatusChange = async (status) => {
+    try {
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "delete-button",
+          cancelButton: "veiwButton1",
+        },
+        buttonsStyling: true,
+      });
+  
+      const result = await swalWithBootstrapButtons.fire({
+        title: "Are you sure?",
+        text: `You want to change the status into ${status}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Change",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      });
+  
+      if (result.isConfirmed) {
+        // Make the axios delete request
+          const response = await statusChange(editId, status);
+            if (response.status === 200) {
+                swalWithBootstrapButtons.fire(
+                  "Changed!!",
+                  `the Payment Status Has changed into ${status}`,
+                  "success"
+                );
+                fetchData(current, currentPageSize);
+                setOpenEditView(false);
+        }
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        swalWithBootstrapButtons.fire("Cancelled", "Done", "error");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
     return(
        <>      
-        {/* <Divider orientation="right">
-                  <Divider type="vertical" />
-                  <Button type="primary" 
-                  onClick={showModal}
-                  >
-                     < PlusCircleOutlined />     Add New Inventory Category
-                  </Button>
-                  <Divider type="vertical" />
-        </Divider> */}
-    
-
+       
+  
       {/* ----------------------------------------------| Modal for Editing Datas |---------------------------------------------------  */}
                     <Modal
                     open={openEditView}
@@ -415,67 +265,35 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
                         <Card style={{padding:"20px"}} bordered={false}>
                         <Divider><h3 style={{color: "blue"}}>Change Payment Status</h3></Divider>
 
-                        <Card.Grid style={{ width: '25%', textAlign: 'center',color:"FFE600"}} 
-                                onClick={() => alert("pending")}>Pending</Card.Grid>
+                        <Card.Grid style={{ width: '25%', textAlign: 'center', backgroundColor:"#FFE600", borderRadius: "10px"}} 
+                                onClick={() => handleStatusChange("pending")}><b>Pending</b></Card.Grid>
 
-                        <Card.Grid style={{ width: '25%', textAlign: 'center',}} 
-                                onClick={() => alert("processing")}>Processing</Card.Grid>
+                        <Card.Grid style={{ width: '25%', textAlign: 'center', backgroundColor:"#87CEEB", borderRadius: "10px"}} 
+                                onClick={() => handleStatusChange("processing")}><b>Processing</b></Card.Grid>
 
-                        <Card.Grid style={{ width: '25%', textAlign: 'center',}} 
-                                onClick={() => alert("completed")}>Completed</Card.Grid>
+                        <Card.Grid style={{ width: '25%', textAlign: 'center', backgroundColor:"#228B22", borderRadius: "10px"}} 
+                                onClick={() => handleStatusChange("completed")}><b>Completed</b></Card.Grid>
 
-                        <Card.Grid style={{ width: '25%', textAlign: 'center',}} 
-                                onClick={() => alert("failed")}>Failed</Card.Grid>
+                        <Card.Grid style={{ width: '25%', textAlign: 'center',backgroundColor:"#B22222", borderRadius: "10px"}} 
+                                onClick={() => handleStatusChange("failed")}><b>Failed</b></Card.Grid>
 
-                        <Card.Grid style={{ width: '25%', textAlign: 'center',}} 
-                                onClick={() => alert("refunded")}>Refunded</Card.Grid>
+                        <Card.Grid style={{ width: '25%', textAlign: 'center', backgroundColor:"#808080", borderRadius: "10px"}} 
+                                onClick={() => handleStatusChange("refunded")}><b>Refunded</b></Card.Grid>
 
-                        <Card.Grid style={{ width: '25%', textAlign: 'center',}} 
-                                onClick={() => alert("partially")}>Partial Payment</Card.Grid>
+                        <Card.Grid style={{ width: '25%', textAlign: 'center', backgroundColor:"#FFD800", borderRadius: "10px"}} 
+                                onClick={() => handleStatusChange("partially")}><b>Partial</b></Card.Grid>
 
-                        <Card.Grid style={{ width: '25%', textAlign: 'center',}} 
-                                onClick={() => alert("cancelled")}>Cancelled</Card.Grid>
+                        <Card.Grid style={{ width: '25%', textAlign: 'center', backgroundColor:"#708090", borderRadius: "10px"}} 
+                                onClick={() => handleStatusChange("cancelled")}><b>Cancelled</b></Card.Grid>
 
-                        <Card.Grid style={{ width: '25%', textAlign: 'center',}} 
-                                onClick={() => alert("expired")}>Expired</Card.Grid>
-
+                        <Card.Grid style={{ width: '25%', textAlign: 'center', backgroundColor:"#D8BFD8", borderRadius: "10px"}} 
+                                onClick={() => handleStatusChange("expired")}><b>Expired</b></Card.Grid>
                         </Card>
                     </Modal>
 
 
-                    
-                    {/* switch (status) {
-          case "pending":
-            color = "#FFE600";
-            break;
-          case "processing":
-            color = "#87CEEB"; 
-            break;
-          case "completed":
-            color = "#228B22"; 
-            break;
-          case "failed":
-            color = "#B22222"; 
-            break;
-          case "refunded":
-            color = "#808080"; 
-            break;
-          case "partially":
-            color = "#FFD700"; 
-            break;
-          case "cancelled":
-            color = "#708090"; 
-            break;
-          case "expired":
-            color = "#D8BFD8";
-            break;
-          default:
-            color = "default"; // Set a default color for unknown statuses
-            break;
-        } */}
-            
   {/* ----------------------------------------------| Modal for Viewing Datas |---------------------------------------------------  */}
-            {/* <Modal
+            <Modal
               open={openView}
               onCancel={() => {
                 setOpenView(false);
@@ -486,65 +304,52 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
              <Divider><h3 style={{color: "green"}}>Viewing Data</h3></Divider>
               <Row gutter={16}>
                     <Col span={24}>
-                        <b> Category Name:</b>   <br/>
-                           {viewData?.category_name}  
+                        <b> Reference Code:</b>   <br/>
+                           {viewData?.reference_code}  
+                    </Col>
+              </Row> <br/>
+              <Row gutter={16}>
+                    <Col span={12}>
+                        <b>Client Id</b>   <br/>
+                            {viewData?.client_id}
+                    </Col>
+                    <Col span={12}>
+                        <b>Client Name</b>   <br/>
+                            {viewData?.full_name}
+                    </Col>
+              </Row> <br/>
+              <Row gutter={16}>
+                    <Col span={12}>
+                        <b>Payment Method</b>   <br/>
+                            {viewData?.payment_method}
+                    </Col>
+                    <Col span={12}>
+                        <b>Amount</b>   <br/>
+                            Php {viewData?.payment_amount}
                     </Col>
               </Row> <br/>
               <Row gutter={16}>
                     <Col span={24}>
-                        <b>Category Description:</b>   <br/>
-                            {viewData?.category_description}
+                        <b>note</b>   <br/>
+                          {viewData?.note}
                     </Col>
+
               </Row> <br/>
               <Row gutter={16}>
-                    <Col span={24}>
+                    <Col span={12}>
+                        <b>Payment Date</b>   <br/>
+                            {utils.convertDate(viewData?.payment_date)}
+                    </Col>
+                    <Col span={12}>
                         <b>Created At</b>   <br/>
                             {utils.convertDate(viewData?.createdAt)}
                     </Col>
 
               </Row>
-            </Modal> */}
-            
-       {/* ----------------------------------------------| Modal for Adding new Datas |---------------------------------------------------  */}            
-       {/* <Modal
-                   open={addopen}
-                   onOk={handleOk} 
-                   confirmLoading={confirmLoading}
-                   onCancel={handleCancel}
-                >
-                    <Divider><h3 h3 style={{color: "purple"}}>Adding new Category</h3></Divider>
-                            <Form
-                              form={formAdd}
-                              labelCol={{ span: 6 }}
-                              wrapperCol={{ span: 14 }}
-                              layout="horizontal"
-                              style={{ maxWidth: 600 }}
-                              onFinish={handleOk}
-                            >
-                                  <Form.Item
-                                   label="Category Name"
-                                   name="category_name"
-                                   rules={[
-                                      { required: true, message: "It's Required!" },
-                                   ]}
-                                  >
-                                          <Input placeholder="Category Name" />
-                                  </Form.Item>
+            </Modal>
 
-
-                                  <Form.Item
-                                    label="Description"
-                                   name="category_description"
-                                   rules={[
-                                      { required: true, message: "It's Required!" },
-                                   ]}
-                                  >
-                                          <Input.TextArea />
-                                  </Form.Item>
-                            </Form>
-                      
-                </Modal> */}
- 
+            <Divider orientation="left"><h3 style={{color: "#FFE600"}}>Pending Payments</h3></Divider>  
+      
                 <Table
                     columns={actionColumn}
                     dataSource={userRow?.rows}

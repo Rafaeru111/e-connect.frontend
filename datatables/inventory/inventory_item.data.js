@@ -597,7 +597,7 @@ const convertId = (id) =>{
                    onCancel={handleCancel}
                 >
 
-                    <Divider><h3 h3 style={{color: "purple"}}>Adding new User</h3></Divider>
+                    <Divider><h3 h3 style={{color: "purple"}}>Add New Item</h3></Divider>
                             <Form
                               form={formAdd}
                               labelCol={{ span: 6 }}
