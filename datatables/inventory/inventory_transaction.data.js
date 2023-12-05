@@ -566,7 +566,7 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
                     width={700}
                 >
 
-                    <Divider><h3 h3 style={{color: "purple"}}>Adding new User</h3></Divider>
+                    <Divider><h3 h3 style={{color: "purple"}}>Add New Transaction</h3></Divider>
                             <Form
                               form={formAdd}
                               labelCol={{ span: 6 }}

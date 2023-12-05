@@ -25,6 +25,90 @@ import axios from "../../helpers/axios"
         });
     };
 
+    export const Processing = async (page, pageSize) => {
+      return axios
+      .get(`/api/payment/?excludeFields=password%2Cotp_code&page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22payment_status%22%3A+%22processing%22%7D`)
+      .then((res) => {
+          return res;
+      })
+      .catch((err) => {
+          return err.response;
+      });
+  };
+
+
+  export const Complete = async (page, pageSize) => {
+    return axios
+    .get(`/api/payment/?excludeFields=password%2Cotp_code&page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22payment_status%22%3A+%22completed%22%7D`)
+    .then((res) => {
+        return res;
+    })
+    .catch((err) => {
+        return err.response;
+    });
+};
+
+
+export const Partial = async (page, pageSize) => {
+  return axios
+  .get(`/api/payment/?excludeFields=password%2Cotp_code&page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22payment_status%22%3A+%22partially%22%7D`)
+  .then((res) => {
+      return res;
+  })
+  .catch((err) => {
+      return err.response;
+  });
+};
+
+
+export const Canceled = async (page, pageSize) => {
+  return axios
+  .get(`/api/payment/?excludeFields=password%2Cotp_code&page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22payment_status%22%3A+%22cancelled%22%7D`)
+  .then((res) => {
+      return res;
+  })
+  .catch((err) => {
+      return err.response;
+  });
+};
+
+export const Failed = async (page, pageSize) => {
+  return axios
+  .get(`/api/payment/?excludeFields=password%2Cotp_code&page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22payment_status%22%3A+%22failed%22%7D`)
+  .then((res) => {
+      return res;
+  })
+  .catch((err) => {
+      return err.response;
+  });
+};
+
+
+export const Expired = async (page, pageSize) => {
+  return axios
+  .get(`/api/payment/?excludeFields=password%2Cotp_code&page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22payment_status%22%3A+%22expired%22%7D`)
+  .then((res) => {
+      return res;
+  })
+  .catch((err) => {
+      return err.response;
+  });
+};
+
+export const Refunded = async (page, pageSize) => {
+  return axios
+  .get(`/api/payment/?excludeFields=password%2Cotp_code&page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22payment_status%22%3A+%22refunded%22%7D`)
+  .then((res) => {
+      return res;
+  })
+  .catch((err) => {
+      return err.response;
+  });
+};
+
+
+
+
 
 
 
@@ -66,9 +150,9 @@ import axios from "../../helpers/axios"
     };
     
 
-    export const updateData = async (value) => {
+    export const statusChange = async (id, status) => {
       return axios
-        .patch("/api/payment/update-data", value)
+        .patch("/api/payment/status-change", {id, status})
         .then((res) => {
           return res;
         })

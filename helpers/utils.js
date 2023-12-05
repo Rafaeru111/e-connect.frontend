@@ -66,7 +66,7 @@ const statusTag = (status) =>{
             color = "#808080"; 
             break;
           case "partially":
-            color = "#FFD700"; 
+            color = "#FFD800"; 
             break;
           case "cancelled":
             color = "#708090"; 
@@ -86,27 +86,12 @@ const statusTag = (status) =>{
         );
       }
 
-     const getUserData = async (id) =>{
-            try {
-              const viewdata1 = await getOne(id);
-            setOpenView(true);
-            if (viewdata1.status === 200) {
-              const data = viewdata.data
-              
-              return data
-
-            }else{
-              return "valid"
-            }
-          } catch (error) {
-            console.error("Error fetching user:", error);
-          }
-      }
+    
 
   module.exports = {
     convertDate,
     roleTag,
     statusTag,
-    getUserData
+
 };
 
