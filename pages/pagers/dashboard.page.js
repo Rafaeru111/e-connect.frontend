@@ -296,14 +296,14 @@ const formatter2 = (value) =>
       <Col span={24}>
         <h3 style={{textAlign:"center"}}>Scheduled Visitation Today.</h3>
           <Card bordered={false} title={"Date Today: " + utils.convertDate(DateToday)} style={{borderRadius: 0}}>
-              {/* <Table
-                   // title={}
+              <Table
+          
                     style={{width: "100%"}}
-                    columns={actionColumn}
-                    dataSource={getTransacToday}
-                    pagination={{ pageSize: 5, position:"bottomCenter" }}
+                    //columns={actionColumn}
+                    //dataSource={getTransacToday}
+                    //pagination={{ pageSize: 5, position:"bottomCenter" }}
                     rowKey="_id"
-                /> */}
+                />
             </Card>
       </Col>
     </Row>

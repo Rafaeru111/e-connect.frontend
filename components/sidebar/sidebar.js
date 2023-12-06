@@ -52,7 +52,7 @@ const items = [
 
    getItem("Visitation Records", "/pagers/visitor/visitor.page",  <EnvironmentOutlined />),
 
-   getItem("Client's Appointment", "/pagers/appointment/application.page",  <CalendarOutlined />),
+   getItem("Client's Application", "/pagers/appointment/application.page",  <CalendarOutlined />),
 
   getItem("Inventory Management", "4", <FileSearchOutlined />, [
     getItem("Inventory Category Management", "/pagers/inventory/inventory_category.page",<FileSearchOutlined />),
