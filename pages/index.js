@@ -26,7 +26,7 @@ import All_Client from './pagers/users/client_user.page'
 import All_Employee from './pagers/users/employee_users.page'
 
 
-//-------------------|Inventory Managements|---------------------------
+//------------------------------| Inventory Managements|---------------------------
 
 import Inventory_Category from './pagers/inventory/inventory_category.page'
 import Inventory_Item from './pagers/inventory/inventory_item.page'
@@ -37,10 +37,16 @@ import Inventory_Sales_Report from './pagers/inventory/inventory_sales_report.pa
 //------------------------| Payment Management |----------------------------------------
 import Payment_Page from "./pagers/payment/payment.page"
 
-//-------------------|Inventory Managements|---------------------------
+//-----------------------------|Visitor Managements|---------------------------------
 import Visitor_Page from './pagers/visitor/visitor.page'
 
 
+//-------------------|Property Managements|----------------------------------
+import Property_Page from './pagers/property/property.page';
+import Property_Type from './pagers/property/property_type.page'
+
+//-----------------| Client's Application |-----------------------------------
+import Application_Page from './pagers/appointment/application.page'
 
 const Home = () => {
   const router = useRouter();
@@ -169,9 +175,15 @@ const handleMenuSelect = (key) => {
               {/* payment */}
               {selectedKey === '/pagers/payment/payment.page' && <Payment_Page />}
               
-
               {/* Visitor */}
               {selectedKey === '/pagers/visitor/visitor.page' && <Visitor_Page />}
+
+              {/* Property */}
+              {selectedKey === '/pagers/property/property.page' && <Property_Page />}
+              {selectedKey === '/pagers/property/property_type.page' && <Property_Type />}
+
+              {/* Client Application */}
+              {selectedKey === '/pagers/appointment/application.page' && <Application_Page />}
 
 
             <FloatButton.BackTop  style={{color:"black", border:"solid black 1px"}}/>

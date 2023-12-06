@@ -15,7 +15,8 @@ import {
   CalendarOutlined,
   HistoryOutlined,
   DeleteOutlined,
-  AuditOutlined
+  AuditOutlined,
+  EnvironmentOutlined
 } from "@ant-design/icons";
 import { 
   Layout, 
@@ -39,24 +40,18 @@ function getItem(label, key, icon = null, children = null) {
 const items = [
   getItem("Dashboard", "/pagers/dashboard.page", <DashboardOutlined />),
 
-  getItem("Users Management", "3", <UserOutlined />, [
+  getItem("Users Management", "2", <UserOutlined />, [
     getItem("All Users", "/pagers/users/all_users.page", <UsergroupAddOutlined />),
     getItem("Client Users", "/pagers/users/client_user.page", <UsergroupAddOutlined />),
     getItem("Employee Users", "/pagers/users/employee_users.page", <UsergroupAddOutlined />),
   ]),
 
-  // getItem("Tables, Products, Categories", "3", <ShoppingCartOutlined />, [
-  // getItem("Table Management", "/pagers/tcp/tables.page"),
-  // getItem("Category Management", "/pagers/tcp/category.page"),
-  // getItem("Product Management", "/pagers/tcp/product.page"),
 
-  // //getItem("Reservation Tables", "/pagers/tables.page"),
-  // ]),
+      //{selectedKey === '/pagers/appointment/application.page' && <Application_Page />}
 
-  // {selectedKey === '/pagers/visitor/visitor.page' && <Visitor_Page />}
+   getItem("Visitation Records", "/pagers/visitor/visitor.page",  <EnvironmentOutlined />),
 
-   getItem("Visitation Records", "/pagers/visitor/visitor.page",  <CalendarOutlined />),
-
+   getItem("Client's Appointment", "/pagers/appointment/application.page",  <CalendarOutlined />),
 
   getItem("Inventory Management", "4", <FileSearchOutlined />, [
     getItem("Inventory Category Management", "/pagers/inventory/inventory_category.page",<FileSearchOutlined />),
@@ -65,68 +60,25 @@ const items = [
     getItem("Sales Report", "/pagers/inventory/inventory_sales_report.page",<DollarCircleOutlined />),,
   ]),
 
+  getItem("Payment Record", "/pagers/payment/payment.page",  <DollarCircleOutlined />),
 
-  // getItem("Miscellaneous", "5", <CopyOutlined />, [
-  //   getItem("Discount Management", "/pagers/computation/discount.page"),
-  //   //getItem("Tax Management", "/pagers/computation/tax.page"),
-  //   getItem("Package List", "/pagers/computation/package.page"),
-  //   getItem("QR-Link ", "/pagers/computation/qr.page"),
-  // ] ),
-  getItem("Payment Record", "5", <DollarCircleOutlined />, [
-    getItem("Payment Management", "/pagers/payment/payment.page"),
-  ]),
-
-
-  getItem("Payment Record", "5", <DollarCircleOutlined />, [
-    getItem("Payment Management", "/pagers/payment/payment.page"),
-  ]),
-
-
-
-  // {
-  //   label: "CMS (For Update)",
-  //   key: "7",
-  //   icon:<EditOutlined />,
-  //   disabled: true, // Add the "disabled" property
-  //   tooltip: "Under Development",
-  // },
-
-  // {
-  //   label: "Settings (For Update)",
-  //   key: "8",
-  //   icon: <SettingOutlined />,
-  //   disabled: true, // Add the "disabled" property
-  //   tooltip: "Under Development",
-  // },
-
-  // {
-  //   label: "Trash (For Update)",
-  //   key: "10",
-  //   icon: <DeleteOutlined />,
-  //   disabled: true, // Add the "disabled" property
-  //   tooltip: "Under Development",
-  // },
-
-  //getItem("Trash", "/pagers/history/recentdeleted.page",<DeleteOutlined />),
-  
-
-  // {
-  //   label: "Activity History (For Update)",
-  //   key: "11",
-  //   icon: <HistoryOutlined />,
-  //   disabled: true, // Add the "disabled" property
-  //   tooltip: "Under Development",
-  // },
-
-  // getItem("Activity History", "9", <HistoryOutlined />, [
-  //   getItem("Dashboard", "/pagers/history/dashboard.page"),
-  //   getItem("Activity Log", "/pagers/history/myactivity.page"),
+  // getItem("Payment Record", "5", <DollarCircleOutlined />, [
+  //   getItem("Payment Management", "/pagers/payment/payment.page"),
   // ]),
 
-  getItem("Settings", "12", <SettingOutlined />, [
-    getItem("Profile", "/pagers/users/profile.page"),
-    getItem("Password", "/password"),
+
+  //{selectedKey === '/pagers/property/property.page' && <Property_Page />}
+  // {selectedKey === '/pagers/property/property_type.page' && <Property_Type />}
+  getItem("Property Management", "6", <DollarCircleOutlined />, [
+    getItem("Property", "/pagers/property/property.page"),
+    getItem("Property Type", "/pagers/property/property_type.page"),
   ]),
+
+
+  // getItem("Settings", "12", <SettingOutlined />, [
+  //   getItem("Profile", "/pagers/users/profile.page"),
+  //   getItem("Password", "/password"),
+  // ]),
 
   
 
