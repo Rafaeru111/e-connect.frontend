@@ -13,6 +13,7 @@
     "@mui/material": "^5.13.7",
     "@nextui-org/react": "^1.0.0-beta.13",
     "antd": "^5.5.2",
+    "antd-img-crop": "^4.18.0",
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.9",

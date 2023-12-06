@@ -1,11 +1,11 @@
-import axios from "../helpers/axios"
+import axios from "../../helpers/axios"
 
-//------------------------------ | Client Application | ----------------------------------------
+//------------------------------ | INVENTORY CATEGORY | ----------------------------------------
 
 //----------------------------GET method for the Users---------------
     export const getAllData = async (page, pageSize) => {
         return axios
-        .get(`/api/client_application/?page=${page}&pageSize=${pageSize}&sort=-createdAt`)
+        .get(`/api/property_type/?page=${page}&pageSize=${pageSize}&sort=-createdAt`)
         .then((res) => {
             return res;
         })
@@ -15,9 +15,9 @@ import axios from "../helpers/axios"
     };
 
 //----------------------------Adding of the Users---------------------------   
-    export const addData = async (category_name, category_description) => {
+    export const addData = async (property_type_name, property_type_description) => {
         return axios
-          .post("/api/client_application/create-application", { category_name, category_description})
+          .post("/api/property_type/create-property-type", { property_type_name, property_type_description})
           .then((res) => {
             return res;
           })
@@ -29,7 +29,7 @@ import axios from "../helpers/axios"
       
     export const getOne = async (id) => {
       return axios
-        .get(`/api/client_application/get-one-data?id=${id}`)
+        .get(`/api/property_type/get-one-data?id=${id}`)
         .then((res) => {
           return res;
         })
@@ -40,7 +40,7 @@ import axios from "../helpers/axios"
 
     export const DeleteData = async (id) => {
       return axios
-        .delete(`/api/inventory_category/${id}`)
+        .delete(`/api/property_type/${id}`)
         .then((res) => {
           return res;
         })
@@ -52,7 +52,7 @@ import axios from "../helpers/axios"
 
     export const updateData = async (value) => {
       return axios
-        .patch("/api/client_application/update-data", value)
+        .patch("/api/property_type/update-data", value)
         .then((res) => {
           return res;
         })

@@ -227,9 +227,9 @@ const formatter2 = (value) =>
         <Col span={24}> 
         <Card bordered={true} style={{borderRadius: 0}}>
           <Divider orientation="left">
-          <Title level={3} >
-              Admin Dashboard 
-          </Title>
+            <Title level={3} >
+                Admin Dashboard 
+            </Title>
           </Divider>
        
         </Card></Col>
@@ -251,23 +251,23 @@ const formatter2 = (value) =>
         <Col span={6}> 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Sales This Week"
+              title="Appointments this Month"
               value={23}
-              formatter={formatter}
+              //formatter={formatter}
             />
           </Card></Col>
         <Col span={6} > 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Monthly Sales"
+              title="Visitation Today"
               value={99}
-              formatter={formatter}
+              //formatter={formatter}
             />
           </Card></Col>
         <Col span={6} > 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Reservations"
+              title="Total Visit this Month"
               value={0}
               formatter={formatter2}
             />
@@ -296,14 +296,14 @@ const formatter2 = (value) =>
       <Col span={24}>
         <h3 style={{textAlign:"center"}}>Scheduled Visitation Today.</h3>
           <Card bordered={false} title={"Date Today: " + utils.convertDate(DateToday)} style={{borderRadius: 0}}>
-              {/* <Table
-                   // title={}
+              <Table
+          
                     style={{width: "100%"}}
-                    columns={actionColumn}
-                    dataSource={getTransacToday}
-                    pagination={{ pageSize: 5, position:"bottomCenter" }}
+                    //columns={actionColumn}
+                    //dataSource={getTransacToday}
+                    //pagination={{ pageSize: 5, position:"bottomCenter" }}
                     rowKey="_id"
-                /> */}
+                />
             </Card>
       </Col>
     </Row>

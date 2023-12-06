@@ -31,7 +31,7 @@ const EChartsChartNoSSR = () => {
       // Specify chart options
       const option = {
         title: {
-          text: 'Popular Sales',
+          text: 'Total Visitation',
           subtext: 'Based on a Weekly Basis',
           left: 'center'
         },

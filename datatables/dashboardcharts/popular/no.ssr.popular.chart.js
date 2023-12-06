@@ -12,8 +12,8 @@ const EChartsChart_PopularNoSSR = () => {
       // Specify chart options
       const option = {
         title: {
-          text: 'Popular Sales',
-          subtext: 'Based on a Weekly Basis',
+          text: 'Popular Designs',
+          subtext: 'Based on Overall Basis',
           left: 'center'
         },
         tooltip: {
