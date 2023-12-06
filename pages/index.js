@@ -37,6 +37,11 @@ import Inventory_Sales_Report from './pagers/inventory/inventory_sales_report.pa
 //------------------------| Payment Management |----------------------------------------
 import Payment_Page from "./pagers/payment/payment.page"
 
+//-------------------|Inventory Managements|---------------------------
+import Visitor_Page from './pagers/visitor/visitor.page'
+
+
+
 const Home = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -164,6 +169,11 @@ const handleMenuSelect = (key) => {
               {/* payment */}
               {selectedKey === '/pagers/payment/payment.page' && <Payment_Page />}
               
+
+              {/* Visitor */}
+              {selectedKey === '/pagers/visitor/visitor.page' && <Visitor_Page />}
+
+
             <FloatButton.BackTop  style={{color:"black", border:"solid black 1px"}}/>
           </div>
      </Content>

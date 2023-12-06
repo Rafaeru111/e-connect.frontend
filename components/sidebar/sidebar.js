@@ -52,7 +52,10 @@ const items = [
 
   // //getItem("Reservation Tables", "/pagers/tables.page"),
   // ]),
-  // getItem("Reservation Calendar", "/pagers/calendar.page",  <CalendarOutlined />),
+
+  // {selectedKey === '/pagers/visitor/visitor.page' && <Visitor_Page />}
+
+   getItem("Visitation Records", "/pagers/visitor/visitor.page",  <CalendarOutlined />),
 
 
   getItem("Inventory Management", "4", <FileSearchOutlined />, [
@@ -71,8 +74,14 @@ const items = [
   // ] ),
   getItem("Payment Record", "5", <DollarCircleOutlined />, [
     getItem("Payment Management", "/pagers/payment/payment.page"),
-   // getItem("Sales Per Month", "/pagers/reports/monthly-sales.page"),
   ]),
+
+
+  getItem("Payment Record", "5", <DollarCircleOutlined />, [
+    getItem("Payment Management", "/pagers/payment/payment.page"),
+  ]),
+
+
 
   // {
   //   label: "CMS (For Update)",
