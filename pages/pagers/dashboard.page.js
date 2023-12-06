@@ -227,9 +227,9 @@ const formatter2 = (value) =>
         <Col span={24}> 
         <Card bordered={true} style={{borderRadius: 0}}>
           <Divider orientation="left">
-          <Title level={3} >
-              Admin Dashboard 
-          </Title>
+            <Title level={3} >
+                Admin Dashboard 
+            </Title>
           </Divider>
        
         </Card></Col>
@@ -251,23 +251,23 @@ const formatter2 = (value) =>
         <Col span={6}> 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Sales This Week"
+              title="Appointments this Month"
               value={23}
-              formatter={formatter}
+              //formatter={formatter}
             />
           </Card></Col>
         <Col span={6} > 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Monthly Sales"
+              title="Visitation Today"
               value={99}
-              formatter={formatter}
+              //formatter={formatter}
             />
           </Card></Col>
         <Col span={6} > 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Reservations"
+              title="Total Visit this Month"
               value={0}
               formatter={formatter2}
             />

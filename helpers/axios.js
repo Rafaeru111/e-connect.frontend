@@ -1,7 +1,11 @@
 import axios from "axios";
 
+
+//Local Host's Backend
+// baseURL: `http://localhost:3004/`,
+
 let instance = axios.create({
-    baseURL: `http://localhost:3004/`,
+    baseURL: `https://econnect-api.orientaldevs.com/e-connect-api2`,
     timeout: 30000,
     headers: {
       "Content-Type": "application/json",
