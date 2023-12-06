@@ -58,7 +58,7 @@ const items = [
     getItem("Inventory Category Management", "/pagers/inventory/inventory_category.page",<FileSearchOutlined />),
     getItem("Inventory Items Management", "/pagers/inventory/inventory_item.page",<FileSearchOutlined />),
     getItem("Inventory Transaction Management", "/pagers/inventory/inventory_transaction.page",<AuditOutlined />),
-    getItem("Sales Report", "/pagers/inventory/inventory_sales_report.page",<DollarCircleOutlined />),,
+    //getItem("Sales Report", "/pagers/inventory/inventory_sales_report.page",<DollarCircleOutlined />),,
   ]),
 
   getItem("Payment Record", "/pagers/payment/payment.page",  <DollarCircleOutlined />),
