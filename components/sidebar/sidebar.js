@@ -16,7 +16,8 @@ import {
   HistoryOutlined,
   DeleteOutlined,
   AuditOutlined,
-  EnvironmentOutlined
+  EnvironmentOutlined,
+  HomeOutlined 
 } from "@ant-design/icons";
 import { 
   Layout, 
@@ -69,7 +70,7 @@ const items = [
 
   //{selectedKey === '/pagers/property/property.page' && <Property_Page />}
   // {selectedKey === '/pagers/property/property_type.page' && <Property_Type />}
-  getItem("Property Management", "6", <DollarCircleOutlined />, [
+  getItem("Property Management", "6", <HomeOutlined />, [
     getItem("Property", "/pagers/property/property.page"),
     getItem("Property Type", "/pagers/property/property_type.page"),
   ]),

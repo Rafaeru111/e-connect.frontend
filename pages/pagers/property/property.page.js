@@ -1,11 +1,11 @@
 import { withAuth } from '../../../helpers/withAuth';
-// import { All_User } from '../../../datatables/users/all_users.data'
+import { Property_Data } from '../../../datatables/property/property.data';
 
 const  Property_Page = () => {
   return (
     <div style={{background:"white", padding:20, borderRadius:20}}>
         <h1>Property Management</h1> 
-        {/* <All_User/>  */}
+        <Property_Data/> 
     </div>
   );
 }
