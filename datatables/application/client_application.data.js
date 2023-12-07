@@ -77,7 +77,7 @@ const [application_date, setDate] = useState('');
         },
         {
             dataIndex: "client_id",
-            title: "Application Date",
+            title: "Client Id",
             key: "client_id",
         },
 

@@ -1,23 +1,12 @@
-import axios from "../../helpers/axios"
+import axios from "../helpers/axios"
 
 //------------------------------ | INVENTORY ITEM | ----------------------------------------
 
 
 //----------------------------GET method for the Users---------------
-    export const Available = async (page, pageSize) => {
-        return axios
-        .get(`/api/property_items/?page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22status%22%3A+%22available%22%7D`)
-        .then((res) => {
-            return res;
-        })
-        .catch((err) => {
-            return err.response;
-        });
-    };
-
     export const Pending = async (page, pageSize) => {
         return axios
-        .get(`/api/property_items/?page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22status%22%3A+%22pending%22%7D`)
+        .get(`/api/visit_appointment/?page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22status%22%3A+%22pending%22%7D`)
         .then((res) => {
             return res;
         })
@@ -26,9 +15,9 @@ import axios from "../../helpers/axios"
         });
     };
 
-    export const Sold = async (page, pageSize) => {
+    export const Verified = async (page, pageSize) => {
         return axios
-        .get(`/api/property_items/?page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22status%22%3A+%22sold%22%7D`)
+        .get(`/api/visit_appointment/?page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22status%22%3A+%22pending%22%7D`)
         .then((res) => {
             return res;
         })
@@ -36,12 +25,34 @@ import axios from "../../helpers/axios"
             return err.response;
         });
     };
+
+    export const Cancelled = async (page, pageSize) => {
+        return axios
+        .get(`/api/visit_appointment/?page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22status%22%3A+%22sold%22%7D`)
+        .then((res) => {
+            return res;
+        })
+        .catch((err) => {
+            return err.response;
+        });
+    };
+    export const Visited = async (page, pageSize) => {
+        return axios
+        .get(`/api/visit_appointment/?page=${page}&pageSize=${pageSize}&sort=-createdAt&query=%7B%22status%22%3A+%22sold%22%7D`)
+        .then((res) => {
+            return res;
+        })
+        .catch((err) => {
+            return err.response;
+        });
+    };
+
 
     
 //----------------------------Adding of the Users---------------------------   
-    export const addData = async (property_type_id, property_name, property_description, property_image, starting_at) => {
+    export const addData = async (visit_date, property_id) => {
         return axios
-          .post("/api/property_items/create-property", { property_type_id, property_name, property_description, property_image, starting_at })
+          .post("/api/visit_appointment/create-visit-application", { visit_date, property_id, })
           .then((res) => {
             return res;
           })

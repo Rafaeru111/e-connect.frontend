@@ -1,17 +1,14 @@
-
-
 import React, { useState, useEffect } from "react";
 import { 
-    Available,
+    Pending,
     addData,
     getOne,
     DeleteData,
     updateData,
     forDropdown,
     statusChange
-        } from "../../../api/property/property.api"
+        } from "../../../api/visit.api"
 
-import { handleFileUpload } from "../../../api/global.api";
 import { Loadersplash } from "../../../helpers/splash";
 import { 
     PlusCircleOutlined,
@@ -47,7 +44,7 @@ import {
   
   const { Text,Paragraph } = Typography;
 
-export const Available_Data = () => {
+export const Pending_Data = () => {
     //managing state
     const [userRow, setUserRow] = useState([]);
     const [forDrop, setForDrop] = useState([]);
@@ -72,176 +69,85 @@ export const Available_Data = () => {
 //------------------| For Edit Value |------------------
 const [editId, seteditId] = useState('');
 const [openChange, setOpenChange] = useState(false)
-const [property_type_id, setTypeId] = useState('');
-const [property_name, setName] = useState('');
-const [property_description, setDescription] = useState('');
-const [starting_at, setStartingAt] = useState(0);
+const [property_id, setProperty] = useState('');
+const [visit_date, setDate] = useState('');
 const [status, setStatus] = useState('');
 //------------------| For Searching |------------------
 const [searchCatValue, setSearchCatValue] = useState("");
 
 
-//----------------|forda upload Ddata|---------------------------
-const [imageHandler, setImage] = useState('');
-
-
-            const customFileUpload = async (info) => {
-                if (info.file.status !== 'uploading') {
-                console.log(info.file);
-                }
-                const file = info.file
-                
-                if (file) {
-                try {
-                    const response = await handleFileUpload(file);
-                    const url = response.data.uri;
-                    setImage(url);
-                    return url;
-                } catch (error) {
-                    message.error(`${info.file.name} Error ${error}`);
-                }
-            
-                } else{
-                message.error(`${info.file.name} file upload failed with the Under this New Updated Code`);
-            
-                }
-            };
-
-            const customFileUploadEdit = async (info) => {
-              if (info.file.status !== 'uploading') {
-              console.log(info.file);
-              }
-              const file = info.file
-              
-              if (file) {
-              try {
-                  const response = await handleFileUpload(file);
-                  const url = response.data.uri;
-                 
-                  Swal.fire('Saved!', '', 'success')
-                 
-                  editChange(url, 'property_image')
-
-
-                  return url;
-              } catch (error) {
-                  message.error(`${info.file.name} Error ${error}`);
-              }
-          
-              } else{
-              message.error(`${info.file.name} file upload failed with the Under this New Updated Code`);
-          
-              }
-          };
-
-            const uploadProps = {
-                name: 'imgupload',
-                showUploadList: false,
-                customRequest: customFileUpload,
-                };
-
-              const uploadPropsEdit = {
-                  name: 'imgupload',
-                  showUploadList: false,
-                  customRequest: customFileUploadEdit,
-                  };
-
     const actionColumn = [
-      {
-        dataIndex: "property_type_id",
-        title: "Property Type",
-        key: "property_type_id",
-        render: (property_type_id) => {
-            const category = forDrop.find((cat) => cat._id === property_type_id);
-            const categoryName = category ? category.property_type_name : "";
-            return <span>{categoryName}</span>;
-          },
-      },
-
+     
             {
-                dataIndex: "property_name",
-                title: "Property Name",
-                key: "property_name",
+                dataIndex: "reference_code",
+                title: "Reference Code",
+                key: "reference_code",
             },
 
             {
-            dataIndex: "property_image",
-            title: "Property Image",
-            key: "property_image",
+                dataIndex: "property_id",
+                title: "Property Id",
+                key: "property_id",
+            },
+
+            {
+                dataIndex: "visit_date",
+                title: "Visit Date",
+                key: "visit_date",
+            },
+
+            {
+            dataIndex: "action",
+            title: "Action",
+            key: "_id",
             render: (_, params) => {
                 return (
-                  <Image
-                    src={params.property_image}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src =
-                        "/logo.png";
-                    }}
-                    alt="img"
-                    style={{ width: "80px", height: "60px", objectFit: "cover", borderRadius: '10px' }}
-                  />
-                );
-              },
-          },
-
-          {
-            dataIndex: "starting_at",
-            title: "Starting At",
-            key: "starting_at",
-            ellipsis: true,
-          },
-        {
-          dataIndex: "action",
-          title: "Action",
-          key: "_id",
-          render: (_, params) => {
-            return (
-                <div>
-                        <Button
-                        size="middle"
-                        shape="circle"
-                        onClick={() => {
-                            handleView(params._id);
-                        }}
-                        >
-                        <EyeOutlined  style={{color:'green'}} />
-                        </Button>
-                        <Divider type="vertical" />
-                        <Button
+                    <div>
+                            <Button
                             size="middle"
                             shape="circle"
                             onClick={() => {
-                            handleEdit(params._id);
+                                handleView(params._id);
                             }}
-                        >
-                            <EditOutlined  style={{color:'blue'}}/>
-                        </Button>
-                        <Divider type="vertical" />
-                        <Button
-                        danger
-                        size="middle"
-                        shape="circle"
-                        onClick={() => {
-                            handleDelete(params._id);
-                        }}
-                        >
-                        <DeleteOutlined/>
-                        </Button>
-                        <Divider type="vertical" />
-                        <Button
-                        style={{color: 'violet'}}
-                        size="middle"
-                        shape="circle"
-                        onClick={() => {
-                          handleStatusEdit(params._id);
-                        }}
-                        >
-                        <PlusOutlined/>
-                        </Button>
-                    </div>
-            );
-          },
-        },  
+                            >
+                            <EyeOutlined  style={{color:'green'}} />
+                            </Button>
+                            <Divider type="vertical" />
+                            <Button
+                                size="middle"
+                                shape="circle"
+                                onClick={() => {
+                                handleEdit(params._id);
+                                }}
+                            >
+                                <EditOutlined  style={{color:'blue'}}/>
+                            </Button>
+                            <Divider type="vertical" />
+                            <Button
+                            danger
+                            size="middle"
+                            shape="circle"
+                            onClick={() => {
+                                handleDelete(params._id);
+                            }}
+                            >
+                            <DeleteOutlined/>
+                            </Button>
+                            <Divider type="vertical" />
+                            <Button
+                            style={{color: 'violet'}}
+                            size="middle"
+                            shape="circle"
+                            onClick={() => {
+                            handleStatusEdit(params._id);
+                            }}
+                            >
+                            <PlusOutlined/>
+                            </Button>
+                        </div>
+                );
+            },
+            },  
     ];
 
 //-----------------------------------------------------| HANDLE for Use_Effects |----------------------------------------------------------------
@@ -249,7 +155,7 @@ const fetchData = async (page, pageSize) => {
   const value1 = page
   const value2 = pageSize
       try {
-        const response = await Available(value1,value2);
+        const response = await Pending(value1,value2);
         const data = await response.data;
         setUserRow(data);
         setIsLoading(false);
@@ -259,21 +165,21 @@ const fetchData = async (page, pageSize) => {
       }
     };
 
-    const DropDown = async () => {
-            try {
-              const response = await forDropdown();
-              const data = await response.data;
-              setForDrop(data);
-            } catch (error) {
-              setError(error);
-            }
-          };
+    // const DropDown = async () => {
+    //         try {
+    //           const response = await forDropdown();
+    //           const data = await response.data;
+    //           setForDrop(data);
+    //         } catch (error) {
+    //           setError(error);
+    //         }
+    //       };
 
 
 // kukunin mo yung Data sa API
     useEffect(() => {
         fetchData(current, currentPageSize);
-        DropDown()
+       //DropDown()
       }, []);
     
         if (isLoading) {
@@ -301,27 +207,21 @@ const fetchData = async (page, pageSize) => {
     //    }else{
     //     fetchData(current, page);
     //    }
-    //   };
+//     //   };
 
-                              
 //-----------------------------------------------------| HANDLE for Add MODALS |----------------------------------------------------------------
 const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicking the data
                             //-------------------------| HANDLE for MODALS Submit |----------------------------- 
      const handleSubmit = async (values) => {
              try {
               const { 
-                property_type_id, 
-                property_name, 
-                property_description,
-                starting_at,
+                property_id, 
+                visit_date, 
               } = values;
 
                   const response = await addData(
-                    property_type_id, 
-                    property_name, 
-                    property_description,
-                    imageHandler,
-                    starting_at,
+                    property_id, 
+                    visit_date, 
                     );
             
                     if (response.status === 200) {
@@ -434,6 +334,8 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
   };
 
 
+
+
  //-------------------------| HANDLE for MODALS Editing Viewing |----------------------------- 
     const handleEdit = async (data) => {
         try {
@@ -442,12 +344,9 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
         if (viewdata1.status === 200) {
             setViewData(viewdata1.data); // Assuming the response object contains the data as an object
             seteditId(viewdata1.data._id)
-            setTypeId(viewdata1.data.property_type_id)
-            setName(viewdata1.data.property_name)
-            setDescription(viewdata1.data.property_description)
-            setStartingAt(viewdata1.data.starting_at)
+            setProperty(viewdata1.data.property_type_id)
+            setDate(viewdata1.data.property_name)
             setStatus(viewdata1.data.status)
-            setImage(viewdata1.data.property_image)
         }
         } catch (error) {
         console.error("Error fetching user:", error);
@@ -460,28 +359,16 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
     const editChange = async (value, field) => {
         const id = editId;
         switch(field){
-            case 'property_type_id': 
-            setTypeId(value)
+            case 'property_id': 
+            setProperty(value)
             break;
 
-            case 'property_name': 
-            setName(value)
+            case 'visit_date': 
+            setDate(value)
             break;
 
-            case 'property_description': 
-            setDescription(value)
-             break;
-
-             case 'starting_at': 
-             setStartingAt(value)
-             break;
-
-             case 'status': 
-             setStatus(value)
-             break;
-
-             case 'property_image': 
-              setImage(value)
+            case 'status': 
+            setStatus(value)
              break;
 
             default:
@@ -514,28 +401,6 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
             });
         }
     };
-
-//-----------------------------------------------------| HANDLE for Search |----------------------------------------------------------------
-
-const handleCatSearch = (value) => {
-    setSearchCatValue(value);
-  };
-  
-      // const [forDrop, setForDrop] = useState([]);
-  const filterMenuItems = (categories, searchValue) => {
-    return categories.filter((category) => {
-      return category.property_type_name.toLowerCase().includes(searchValue.toLowerCase());
-    });
-  };
-  
-  const filteredItems = filterMenuItems(forDrop, searchCatValue);
-
-const convertId = (id) =>{
-        const category = forDrop.find((cat) => cat._id === id);
-        const categoryName = category ? category.property_type_name : "";
-        return <span>{categoryName}</span>;
-} 
-
 
 
 
@@ -600,7 +465,7 @@ console.error(error);
                   <Button type="primary" 
                   onClick={showModal}
                   >
-                    <PlusCircleOutlined />    Add New Property
+                    <PlusCircleOutlined />    Add New Visit
                   </Button>
                   <Divider type="vertical" />
         </Divider>
@@ -619,44 +484,40 @@ console.error(error);
 
 
              <Divider><h3 style={{color: "Blue"}}>Edit Data</h3></Divider>
-              <Row gutter={16}>
-                    <Col span={12}>
-                        <b>Category:</b>   <br/>
-                        <Select 
-                                        showSearch
-                                        placeholder="Select Type" 
-                                        allowClear
-                                        defaultValue={viewData?.inventory_category_id}
-                                        onSearch={handleCatSearch}
-                                        onChange={(value) => editChange(value, 'property_type_id')}
-                                        optionFilterProp="children"
-                                        filterOption={false}
-                                        >
-                                                {filteredItems.map(category => (
-                                                  <Select.Option 
-                                                  key={category._id}
-                                                  value={category._id}
-                                                  >
-                                                    {category.property_type_name}
-                                                  </Select.Option>
-                                                ))} 
-                                        </Select>
+             <Row gutter={16}>
+                    <Col span={24}>
+                        <b>Date of Visit:</b>   <br/>
+                        {viewData?.reference_code}
                     </Col>
+                    
+              </Row> <br/>
+              <Row gutter={16}>
+                  
 
                     <Col span={12}>
-                            <b>Property Name:</b>   <br/>
+                            <b>Property Id:</b>   <br/>
                             <Paragraph
                             editable={{
-                                onChange: (updatedValue) => editChange(updatedValue, 'property_name'),
+                                onChange: (updatedValue) => editChange(updatedValue, 'property_id'),
                             }}
                             >
-                            {property_name}
+                            {property_id}
+                        </Paragraph>
+                    </Col>
+                    <Col span={12}>
+                        <b>Date </b>   <br/>
+                        <Paragraph
+                            editable={{
+                                onChange: (updatedValue) => editChange(updatedValue, 'property_id'),
+                            }}
+                            >
+                            {property_id}
                         </Paragraph>
                     </Col>
               </Row> <br/>
               <Row gutter={16}>
                     <Col span={12}>
-                    <b>Starting At:</b>   <br/>
+                    <b>Status:</b>   <br/>
                         <Paragraph
                             editable={{
                                 onChange: (updatedValue) => editChange(updatedValue, 'starting_at'),
