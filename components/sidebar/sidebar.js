@@ -67,7 +67,6 @@ const items = [
   //   getItem("Payment Management", "/pagers/payment/payment.page"),
   // ]),
 
-
   //{selectedKey === '/pagers/property/property.page' && <Property_Page />}
   // {selectedKey === '/pagers/property/property_type.page' && <Property_Type />}
   getItem("Property Management", "6", <HomeOutlined />, [
