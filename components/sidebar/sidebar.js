@@ -58,7 +58,7 @@ const items = [
     getItem("Inventory Category Management", "/pagers/inventory/inventory_category.page",<FileSearchOutlined />),
     getItem("Inventory Items Management", "/pagers/inventory/inventory_item.page",<FileSearchOutlined />),
     getItem("Inventory Transaction Management", "/pagers/inventory/inventory_transaction.page",<AuditOutlined />),
-    getItem("Sales Report", "/pagers/inventory/inventory_sales_report.page",<DollarCircleOutlined />),,
+    //getItem("Sales Report", "/pagers/inventory/inventory_sales_report.page",<DollarCircleOutlined />),,
   ]),
 
   getItem("Payment Record", "/pagers/payment/payment.page",  <DollarCircleOutlined />),
@@ -66,7 +66,6 @@ const items = [
   // getItem("Payment Record", "5", <DollarCircleOutlined />, [
   //   getItem("Payment Management", "/pagers/payment/payment.page"),
   // ]),
-
 
   //{selectedKey === '/pagers/property/property.page' && <Property_Page />}
   // {selectedKey === '/pagers/property/property_type.page' && <Property_Type />}
