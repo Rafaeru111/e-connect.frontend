@@ -6,7 +6,10 @@ import {
     DeleteData,
     updateData,
     forDropdown,
-    statusChange
+    statusChange,
+    dropProperty,
+    dropClient,
+    toVerify
         } from "../../../api/visit.api"
 
 import { Loadersplash } from "../../../helpers/splash";
@@ -37,7 +40,8 @@ import {
     InputNumber,
     Upload,
     Image,
-    Card
+    Card,
+    DatePicker
   } from "antd";
 
   import ImgCrop from 'antd-img-crop';
@@ -72,9 +76,13 @@ const [openChange, setOpenChange] = useState(false)
 const [property_id, setProperty] = useState('');
 const [visit_date, setDate] = useState('');
 const [status, setStatus] = useState('');
-//------------------| For Searching |------------------
-const [searchCatValue, setSearchCatValue] = useState("");
 
+
+//------------------| For Searching |------------------
+ const [clientDrop, setClientDrop] = useState([]);
+const [propertyDrop, setPropertyDrop] = useState([]);
+const [handleSearchClient, sethandleSearchClient] = useState("");
+const [handleSearchProperty, sethandleSearchProperty] = useState("");
 
     const actionColumn = [
      
@@ -83,18 +91,46 @@ const [searchCatValue, setSearchCatValue] = useState("");
                 title: "Reference Code",
                 key: "reference_code",
             },
-
             {
-                dataIndex: "property_id",
-                title: "Property Id",
-                key: "property_id",
+              dataIndex: "client_id",
+              title: "Client Id",
+              key: "client_id",
+              render: (client_id) => {
+                const category = clientDrop.find((cat) => cat._id === client_id);
+                const categoryName = category ? category.fullName : "";
+                return <span>{categoryName}</span>;
+              },
+          },
+          {
+            dataIndex: "property_id",
+            title: "Property Id",
+            key: "property_id",
+            render: (property_id) => {
+              const category = propertyDrop.find((cat) => cat._id === property_id);
+              const categoryName = category ? category.propertyName : "";
+              return <span>{categoryName}</span>;
             },
+        },
 
-            {
-                dataIndex: "visit_date",
-                title: "Visit Date",
-                key: "visit_date",
-            },
+        {
+          dataIndex: "visit_date",
+          title: "Visit Date",
+          key: "visit_date",
+          render: (visit_date) => {
+            const date = new Date(visit_date);
+            const options = {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            };
+
+            return <span>{date.toLocaleString(undefined, options)}</span>;
+
+          },
+      },
 
             {
             dataIndex: "action",
@@ -112,7 +148,7 @@ const [searchCatValue, setSearchCatValue] = useState("");
                             >
                             <EyeOutlined  style={{color:'green'}} />
                             </Button>
-                            <Divider type="vertical" />
+                            {/* <Divider type="vertical" />
                             <Button
                                 size="middle"
                                 shape="circle"
@@ -121,7 +157,7 @@ const [searchCatValue, setSearchCatValue] = useState("");
                                 }}
                             >
                                 <EditOutlined  style={{color:'blue'}}/>
-                            </Button>
+                            </Button> */}
                             <Divider type="vertical" />
                             <Button
                             danger
@@ -165,21 +201,33 @@ const fetchData = async (page, pageSize) => {
       }
     };
 
-    // const DropDown = async () => {
-    //         try {
-    //           const response = await forDropdown();
-    //           const data = await response.data;
-    //           setForDrop(data);
-    //         } catch (error) {
-    //           setError(error);
-    //         }
-    //       };
+    const property_drop = async () => {
+      try {
+        const response = await dropProperty();
+        const data = await response.data;
+        setPropertyDrop(data);
+      } catch (error) {
+        setError(error);
+      }
+    };
+
+    const client_drop = async () => {
+      try {
+        const response = await dropClient();
+        const data = await response.data;
+        setClientDrop(data);
+      } catch (error) {
+        setError(error);
+      }
+    };
+
 
 
 // kukunin mo yung Data sa API
     useEffect(() => {
         fetchData(current, currentPageSize);
-       //DropDown()
+       property_drop()
+       client_drop()
       }, []);
     
         if (isLoading) {
@@ -200,15 +248,6 @@ const fetchData = async (page, pageSize) => {
        }
       };
 
-    //   const onChangePageSize = (page) => {
-    //     setcurrentPageSize(page);
-    //    if(!page){
-    //     return false
-    //    }else{
-    //     fetchData(current, page);
-    //    }
-//     //   };
-
 //-----------------------------------------------------| HANDLE for Add MODALS |----------------------------------------------------------------
 const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicking the data
                             //-------------------------| HANDLE for MODALS Submit |----------------------------- 
@@ -217,11 +256,13 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
               const { 
                 property_id, 
                 visit_date, 
+                client_id
               } = values;
 
                   const response = await addData(
                     property_id, 
                     visit_date, 
+                    client_id
                     );
             
                     if (response.status === 200) {
@@ -278,6 +319,7 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
           };
 
 //-------------------------| HANDLE for MODALS Viewing |----------------------------- 
+
   const handleView = async (data) => {
     try {
        const viewdata1 = await getOne(data);
@@ -359,9 +401,6 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
     const editChange = async (value, field) => {
         const id = editId;
         switch(field){
-            case 'property_id': 
-            setProperty(value)
-            break;
 
             case 'visit_date': 
             setDate(value)
@@ -416,7 +455,6 @@ const handleStatusEdit = async (data) => {
 };
 
 
-
 //-------------------------| HANDLE for Delete Data |----------------------------- 
 const handleStatusChange = async (status) => {
 try {
@@ -458,6 +496,109 @@ console.error(error);
 }
 };
 
+const handleToVerify = async () => {
+  try {
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "delete-button",
+      cancelButton: "veiwButton1",
+    },
+    buttonsStyling: true,
+  });
+  
+  const result = await swalWithBootstrapButtons.fire({
+    title: "Are you sure?",
+    text: `You want to change the status into verify?`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Change",
+    cancelButtonText: "Cancel",
+    reverseButtons: true,
+  });
+  
+  if (result.isConfirmed) {
+    // Make the axios delete request
+      const response = await toVerify(editId);
+        if (response.status === 200) {
+            swalWithBootstrapButtons.fire(
+              "Changed!!",
+              `the Property Status Has changed into verified`,
+              "success"
+            );
+            fetchData(current, currentPageSize);
+            setOpenChange(false);
+    }
+  } else if (result.dismiss === Swal.DismissReason.cancel) {
+    swalWithBootstrapButtons.fire("Cancelled", "Done", "error");
+  }
+  } catch (error) {
+  console.error(error);
+  }
+  };
+
+
+  const GenerateQr = () => {
+
+  }
+
+//------------------------------------| Forda Property |--------------------------------------
+//------------------------------------| Fetching The Property |--------------------------------------
+
+//   const [clientDrop, setClientDrop] = useState([]);
+    //   const [propertyDrop, setPropertyDrop] = useState([]);
+    // dropProperty,
+    // dropClient
+//-----------------------------------------------------| HANDLE for Search |----------------------------------------------------------------
+
+
+const handlePropSearch = (value) => {
+  sethandleSearchProperty(value);
+};
+
+const filterMenuItems = (categories, searchValue) => {
+  return categories.filter((category) => {
+    return category.propertyName.toLowerCase().includes(searchValue.toLowerCase());
+  });
+};
+
+const filteredItems = filterMenuItems(propertyDrop, handleSearchProperty);
+
+const convertId = (id) =>{
+      const category = propertyDrop.find((cat) => cat._id === id);
+      const categoryName = category ? category.propertyName : "";
+      return <span>{categoryName}</span>;
+} 
+
+//-----------------------------------------|Handle set Client|-----------------------------------------------
+//------------------------------------| Fetching The Property |--------------------------------------
+
+//   const [clientDrop, setClientDrop] = useState([]);
+  //   const [propertyDrop, setPropertyDrop] = useState([]);
+  // dropProperty,
+  // dropClient
+//-----------------------------------------------------| HANDLE for Search |----------------------------------------------------------------
+// const [clientDrop, setClientDrop] = useState([]);
+// const [propertyDrop, setPropertyDrop] = useState([]);
+// const [handleSearchClient, sethandleSearchClient] = useState("");
+// const [handleSearchProperty, sethandleSearchProperty] = useState("");
+const handleClientSearch = (value) => {
+  sethandleSearchClient(value);
+};
+
+const filterMenu = (categories, searchValue) => {
+  return categories.filter((category) => {
+    return category.fullName.toLowerCase().includes(searchValue.toLowerCase());
+  });
+};
+
+const filtered = filterMenu(clientDrop, handleSearchClient);
+
+const convertClientId = (id) =>{
+      const category = clientDrop.find((cat) => cat._id === id);
+      const categoryName = category ? category.fullName : "";
+      return <span>{categoryName}</span>;
+} 
+
     return(
        <>      
         <Divider orientation="right">
@@ -465,7 +606,7 @@ console.error(error);
                   <Button type="primary" 
                   onClick={showModal}
                   >
-                    <PlusCircleOutlined />    Add New Visit
+                    <PlusCircleOutlined />    Add New Visitation
                   </Button>
                   <Divider type="vertical" />
         </Divider>
@@ -482,11 +623,10 @@ console.error(error);
             >
 
 
-
              <Divider><h3 style={{color: "Blue"}}>Edit Data</h3></Divider>
              <Row gutter={16}>
                     <Col span={24}>
-                        <b>Date of Visit:</b>   <br/>
+                        <b>Reference Code:</b>   <br/>
                         {viewData?.reference_code}
                     </Col>
                     
@@ -496,35 +636,59 @@ console.error(error);
 
                     <Col span={12}>
                             <b>Property Id:</b>   <br/>
-                            <Paragraph
-                            editable={{
-                                onChange: (updatedValue) => editChange(updatedValue, 'property_id'),
-                            }}
-                            >
-                            {property_id}
-                        </Paragraph>
+
+                            
+                            <Select 
+                                            showSearch
+                                            placeholder="Select Type" 
+                                            allowClear
+                                            onSearch={handlePropSearch}
+                                            onChange={(value) => editChange(value, 'property_id')}
+                                            optionFilterProp="children"
+                                            filterOption={false}
+                                            >
+                                                    {filteredItems.map(category => (
+                                                    <Select.Option 
+                                                    key={category._id}
+                                                    value={category._id}
+                                                    >
+                                                        {category.propertyName}
+                                                    </Select.Option>
+                                                    ))} 
+                                            </Select>
                     </Col>
                     <Col span={12}>
-                        <b>Date </b>   <br/>
+                        <b>Visit Date </b>   <br/>
                         <Paragraph
                             editable={{
-                                onChange: (updatedValue) => editChange(updatedValue, 'property_id'),
+                                onChange: (updatedValue) => editChange(updatedValue, 'visit_date'),
                             }}
                             >
-                            {property_id}
+                            {visit_date}
                         </Paragraph>
                     </Col>
               </Row> <br/>
               <Row gutter={16}>
                     <Col span={12}>
-                    <b>Status:</b>   <br/>
-                        <Paragraph
-                            editable={{
-                                onChange: (updatedValue) => editChange(updatedValue, 'starting_at'),
-                            }}
-                            >
-                            {starting_at}
-                        </Paragraph>
+                    <b>Client:</b>   <br/>
+                          <Select 
+                                            showSearch
+                                            placeholder="Select Type" 
+                                            allowClear
+                                            onSearch={handleClientSearch}
+                                            onChange={(value) => editChange(value, 'client_id')}
+                                            optionFilterProp="children"
+                                            filterOption={false}
+                                            >
+                                                    {filtered.map(category => (
+                                                    <Select.Option 
+                                                    key={category._id}
+                                                    value={category._id}
+                                                    >
+                                                        {category.fullName}
+                                                    </Select.Option>
+                                                    ))} 
+                                            </Select>
                     </Col>
                     <Col span={12}>
                     <b>Status:</b>   <br/>
@@ -532,57 +696,16 @@ console.error(error);
                             onChange={(value) => editChange(value, 'status')}
                             style={{width:'100%'}}
                         >
-                             <Select.Option value="available">Available</Select.Option>
-                              <Select.Option value="pending">Pending</Select.Option>
-                               <Select.Option value="sold">Sold</Select.Option>
+                             <Select.Option value="pending">Pending</Select.Option>
+                              <Select.Option value="verified">Verified</Select.Option>
+                               <Select.Option value="visited">Visited</Select.Option>
+                               <Select.Option value="cancelled">Cancelled</Select.Option>
                          </Select>
                     </Col>
                    
               </Row> <br/>
-              <Row gutter={16}>
-                    <Col span={24}>
-                            <b>Description:</b>   <br/>
-                            <Paragraph
-                                editable={{
-                                    onChange: (updatedValue) => editChange(updatedValue, 'property_description'),
-                                }}
-                                >
-                                {property_description}
-                        </Paragraph>
-                    </Col>
-              </Row>
-              
-              <Row gutter={16}>
-              <Col span={12}>
-                                
-                                <ImgCrop
-                                    modalTitle="Finalize Image Upload"
-                                    rotationSlider
-                                    aspectSlider
-                                    showGrid
-                                    showReset
-                                    >
-                                      <Upload.Dragger name="files" {...uploadPropsEdit}>
-                                          <p className="ant-upload-drag-icon" >
-                                            <InboxOutlined />
-                                          </p>
-                                          <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                        </Upload.Dragger>
-                                    </ImgCrop>
-                          </Col> 
-                            <Col span={12} style={{ textAlign: 'center' }}>
-                                  <Image 
-                                    width={150}
-                                    src={imageHandler}
-                                    preview={false}
-                                    onError={(e) => {
-                                      e.target.onerror = null;
-                                      e.target.src = "/logo.png";
-                                    }}
-                                    alt="img"
-                                  />
-                                </Col>
-              </Row>
+            
+             
             </Modal>
             
 
@@ -599,53 +722,40 @@ console.error(error);
               width={600}
             >
              <Divider><h3 style={{color: "green"}}>Viewing Data</h3></Divider>
+             <Row gutter={16}>
+                    <Col span={12}>
+                        <b> Reference Code:</b>   <br/>
+                     
+                           {convertId(viewData?.reference_code)}
+                    </Col>
+
+              </Row> <br/>
               <Row gutter={16}>
                     <Col span={12}>
                         <b> Property Type:</b>   <br/>
                      
-                           {convertId(viewData?.property_type_id)}
+                           {convertId(viewData?.property_id)}
                     </Col>
                     <Col span={12}>
-                            <b>Property Name:</b>   <br/>
-                            {viewData?.property_name}
+                        <b> Client:</b>   <br/>
+                     
+                           {convertClientId(viewData?.client_id)}
                     </Col>
+                   
               </Row> <br/>
-
+              
               <Row gutter={16}>
                     <Col span={12}>
-                        <b>Starting At:</b>   <br/>
-                            {viewData?.starting_at}
+                        <b>Visit Day:</b>   <br/>
+                            {utils.convertDate(viewData?.visit_date)}
                     </Col>
                     <Col span={12}>
                         <b>Created At</b>   <br/>
                             {utils.convertDate(viewData?.createdAt)}
                     </Col>
                   
-                  
-                   
+                     
               </Row>
-              <br/>
-              <Row gutter={16}>
-                    <Col span={12}>
-                    <b>Image:</b>   <br/>
-                                     <Image 
-                                              width={250}
-                                              src={viewData.property_image}
-                                              preview={false}
-                                              onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/logo.png";
-                                              }}
-                                              alt="img"
-                                            />
-                    </Col>
-                    <Col span={12}>
-                    <b>Description:</b>   <br/>
-                            {viewData?.property_description}
-                    </Col>  
-
-              </Row> 
-              <br/>
             </Modal>
 
 
@@ -657,7 +767,7 @@ console.error(error);
                    onCancel={handleCancel}
                 >
 
-                    <Divider><h3 h3 style={{color: "purple"}}>Add New Item</h3></Divider>
+                    <Divider><h3 h3 style={{color: "purple"}}>Add New</h3></Divider>
                             <Form
                               form={formAdd}
                               labelCol={{ span: 6 }}
@@ -668,95 +778,68 @@ console.error(error);
                             >
                                  <Form.Item 
                                   label="Property Type"
-                                  name="property_type_id"
+                                  name="property_id"
                                   rules={[
                                     { required: true, message: "It's Required!" },
                                  ]}
                                   >
-                                    <Select 
-                                        showSearch
-                                        placeholder="Select Type" 
-                                        allowClear
-                                        onSearch={handleCatSearch}
-                                        optionFilterProp="children"
-                                        filterOption={false}
-                                        >
-                                                {filteredItems.map(category => (
-                                                  <Select.Option 
-                                                  key={category._id}
-                                                  value={category._id}
-                                                  >
-                                                    {category.property_type_name}
-                                                  </Select.Option>
-                                                ))} 
-                                        </Select>
+                                   
+                                   <Select 
+                                            showSearch
+                                            placeholder="Select Type" 
+                                            allowClear
+                                            onSearch={handlePropSearch}
+                                            optionFilterProp="children"
+                                            filterOption={false}
+                                            >
+                                                    {filteredItems.map(category => (
+                                                    <Select.Option 
+                                                    key={category._id}
+                                                    value={category._id}
+                                                    >
+                                                        {category.propertyName}
+                                                    </Select.Option>
+                                                    ))} 
+                                            </Select>
                                        
                                     </Form.Item>
                                     
                                   <Form.Item
-                                   label="Property Name"
-                                   name="property_name"
+                                   label="Visit Date"
+                                   name="visit_date"
                                    rules={[
                                       { required: true, message: "It's Required!" },
                                    ]}
                                   >
-                                          <Input placeholder="Inventory Name" />
+                                          <DatePicker />
                                   </Form.Item>
 
 
                                   <Form.Item
-                                   label="Description"
-                                   name="property_description"
-                                   rules={[
-                                      { required: true, message: "It's Required!" },
-                                   ]}
-                                  >
-                                     <Input.TextArea />
+                                        label="Client Id"
+                                      name="client_id"
+                                      rules={[
+                                          { required: true, message: "It's Required!" },
+                                      ]}
+                                      >
+                                               <Select 
+                                                showSearch
+                                                placeholder="Select Type" 
+                                                allowClear
+                                                onSearch={handleClientSearch}
+                                                optionFilterProp="children"
+                                                filterOption={false}
+                                                >
+                                                        {filtered.map(category => (
+                                                        <Select.Option 
+                                                        key={category._id}
+                                                        value={category._id}
+                                                        >
+                                                            {category.fullName}
+                                                        </Select.Option>
+                                                        ))} 
+                                                </Select>
                                   </Form.Item>
-
-                                  <Form.Item
-                                   label="Starts At"
-                                   name="starting_at"
-                                   rules={[
-                                      { required: true, message: "It's Required!" },
-                                   ]}
-                                   
-                                  >
-                                          <InputNumber style={{width:"100%"}} placeholder="Input currency" defaultValue={0} step={0.01} />
-                                  </Form.Item>
-                                  
-                                  <Row>
-                                    <Col span={12}>
-                                
-                                          <ImgCrop
-                                              modalTitle="Finalize Image Upload"
-                                              rotationSlider
-                                              aspectSlider
-                                              showGrid
-                                              showReset
-                                              >
-                                                <Upload.Dragger name="files" {...uploadProps}>
-                                                    <p className="ant-upload-drag-icon" >
-                                                      <InboxOutlined />
-                                                    </p>
-                                                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                                  </Upload.Dragger>
-                                              </ImgCrop>
-                                    </Col> 
-                                      <Col span={12} style={{ textAlign: 'center' }}>
-                                            <Image 
-                                              width={150}
-                                              src={imageHandler}
-                                              preview={false}
-                                              onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/logo.png";
-                                              }}
-                                              alt="img"
-                                            />
-                                          </Col>
-                                  </Row>
-
                             </Form>
 
                 </Modal>
@@ -772,14 +855,17 @@ console.error(error);
                         <Card style={{padding:"20px"}} bordered={false}>
                         <Divider><h3 style={{color: "blue"}}>Change Payment Status</h3></Divider>
 
-                        <Card.Grid style={{ width: '30%', textAlign: 'center', backgroundColor:"blue", borderRadius: "10px", margin:"10px"}} 
-                                onClick={() => handleStatusChange("available")}><b>Available</b></Card.Grid>
-
-                        <Card.Grid style={{ width: '30%', textAlign: 'center', backgroundColor:"yellow", borderRadius: "10px",margin:"10px"}} 
+                        <Card.Grid style={{ width: '20%', textAlign: 'center', backgroundColor:"blue", borderRadius: "10px", margin:"10px"}} 
                                 onClick={() => handleStatusChange("pending")}><b>Pending</b></Card.Grid>
 
-                        <Card.Grid style={{ width: '30%', textAlign: 'center', backgroundColor:"green", borderRadius: "10px",margin:"10px"}} 
-                                onClick={() => handleStatusChange("sold")}><b>Sold</b></Card.Grid>
+                        <Card.Grid style={{ width: '20%', textAlign: 'center', backgroundColor:"#9ACD32", borderRadius: "10px",margin:"10px"}} 
+                                onClick={() => handleToVerify()}><b>Verified</b></Card.Grid>
+
+                        <Card.Grid style={{ width: '20%', textAlign: 'center', backgroundColor:"green", borderRadius: "10px",margin:"10px"}} 
+                                onClick={() => handleStatusChange("visited")}><b>Visited</b></Card.Grid>
+                        
+                        <Card.Grid style={{ width: '20%', textAlign: 'center', backgroundColor:"yellow", borderRadius: "10px",margin:"10px"}} 
+                                onClick={() => handleStatusChange("cancelled")}><b>Cancelled</b></Card.Grid>
                         </Card>
                     </Modal>
                       

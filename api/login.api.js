@@ -32,5 +32,16 @@ import axios from "../helpers/axios"
             return err.response;
           });
       };
+
+      export const client_login = async (email, password) => {
+        return axios
+          .post("/api/auth/client-login", {email, password})
+          .then((res) => {
+            return res;
+          })
+          .catch((err) => {
+            return err.response;
+          });
+      };
       
       
