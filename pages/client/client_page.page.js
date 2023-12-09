@@ -148,8 +148,6 @@ const showModal = (id) => {
                               style={{ maxWidth: 600 }}
                               onFinish={handleOk}
                             >
-                                
-                                    
                                   <Form.Item
                                    label="Visit Date"
                                    name="visit_date"
