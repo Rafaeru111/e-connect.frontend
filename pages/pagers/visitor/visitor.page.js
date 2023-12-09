@@ -1,5 +1,4 @@
 import { withAuth } from '../../../helpers/withAuth';
-// import { All_User } from '../../../datatables/users/all_users.data'
 import { Visitor_Data } from '../../../datatables/visitation/visit.data';
 
 
