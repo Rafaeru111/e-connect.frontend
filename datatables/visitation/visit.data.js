@@ -5,6 +5,10 @@ import { Tabs } from 'antd';
 //status Tables
 
 import { Pending_Data } from "./visit_status/pending.status";
+import {Visited_Data } from "./visit_status/visited.status"
+import { Cancelled_Data } from "./visit_status/cancelled.status";
+import { Verified_Data } from "./visit_status/verified.status";
+
 
 const { TabPane } = Tabs;
 
@@ -25,12 +29,11 @@ export const Visitor_Data = () => {
             case "Pending":
                 return <Pending_Data key={activeTab} />;
             case "Verified":
-                return <Pending_Data key={activeTab} />;
+                return <Verified_Data key={activeTab} />;
             case "Cancelled":
-                return <Pending_Data key={activeTab} />;
-
+                return <Cancelled_Data key={activeTab} />;
             case "Visited":
-                    return <Pending_Data key={activeTab} />;
+                return <Visited_Data key={activeTab} />;
             default:
                 return null;
         }
