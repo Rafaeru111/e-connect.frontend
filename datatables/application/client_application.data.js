@@ -4,12 +4,9 @@ import { Tabs } from 'antd';
 
 //status Tables
 
-
 import { Pending_Application } from './application_status/pending.status' 
 import { Denied_Application } from "./application_status/denied.status";
 import { Accepted_Application } from "./application_status/accepted.status";
-
-
 
 const { TabPane } = Tabs;
 
