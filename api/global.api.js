@@ -18,6 +18,8 @@ export const handleFileUpload = async (file) => {
 };
 
 
+
+
 export const checkToken = async (token) => {
   return axios
     .post("/api/auth/check-token", { token})
