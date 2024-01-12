@@ -74,9 +74,8 @@ export default function Login() {
 
   const [email, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const [getotp, setOtp] = useState(0);
-  const [isLoged, setisLoged] = useState(false);
 
+  const [isLoged, setisLoged] = useState(false);
   const [passwordVisible, setPasswordVisible] = React.useState(false);
 
   const [isDisabled, setIsDisabled] = useState(false);
@@ -91,12 +90,14 @@ export default function Login() {
 
     if (response.code === 200 || response.data?.success === true) {
       
-          setisLoged(true)
-          setLoading(false)
-          setIsDisabled(true);
-          setUserName(values.email)
-          setTimer(30);     
-
+   
+                localStorage.setItem("token", response.data.data.token);
+                localStorage.setItem("selectedKey", "/pagers/dashboard.page");
+                console.log(response);
+                setUserData(response.data.data.userData);
+                setLoggedIn();
+                router.push('/');
+         
     } else {
       Swal.fire({
         icon: "error",
@@ -109,27 +110,27 @@ export default function Login() {
   
   };
 
-  const handleOtp = async (value) => {
+  // const handleOtp = async (value) => {
     
-    const response = await otp(value.otp);
-    if (response.code === 200 || response.data?.success === true) {
-          localStorage.setItem("token", response.data.data.token);
-          localStorage.setItem("selectedKey", "/pagers/dashboard.page");
-          console.log(response);
-          setUserData(response.data.data.userData);
-          setLoggedIn();
-          router.push('/');
-    } 
+  //   const response = await otp(value.otp);
+  //   if (response.code === 200 || response.data?.success === true) {
+  //         localStorage.setItem("token", response.data.data.token);
+  //         localStorage.setItem("selectedKey", "/pagers/dashboard.page");
+  //         console.log(response);
+  //         setUserData(response.data.data.userData);
+  //         setLoggedIn();
+  //         router.push('/');
+  //   } 
     
-    else {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: response.data.message,
-      });
-      setHandleLoading(false)
-    }
-  };
+  //   else {
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Oops...",
+  //       text: response.data.message,
+  //     });
+  //     setHandleLoading(false)
+  //   }
+  // };
 
   //-----------------------resend code timeout
   useEffect(() => {
@@ -259,66 +260,7 @@ export default function Login() {
   // Login page content
   return (
     <div>
-        {isLoged ? (
-          // Render this when isLoged is true
-          <Card style={{ margin: 'auto', maxWidth: '600px', marginTop:"150px"}}>
-
-            <Tooltip placement="topLeft" title="Not you?">
-            <ArrowLeftOutlined onClick={() => goBack()} css={{ cursor: 'pointer', ':hover': { color: 'blue' }}} />
-            </Tooltip>
-     
-                    <Divider />
-                   <h2 style={{textAlign:"center"}}>Enter Code sent to your Email</h2>
-        
-              <p style={{textAlign:"center"}}>code has been sent to your email '{email}'</p>
-              <br/>
-                    <Form
-                      name="normal_login"
-                      onFinish={handleOtp}
-                      >
-                      <Form.Item
-                        name="otp"
-                        rules={[
-                          {
-                            required: true,
-                            message: 'Please input the OTP!',
-                          },
-                        ]}
-                      >
-                        <InputNumber placeholder="Input OTP" 
-                        style={{
-                          width: '100%',
-                        }}/>
-                      </Form.Item>
-<Divider/>
-                    <Form.Item>
-                      <Row >
-                        <Col span={12}>
-                          <Button
-                            style={{margin:"5px",}}
-                              htmlType="submit"
-                              type="primary"
-                              isLoading={handleLoading}
-                              block
-                            >Verify</Button>  
-                        </Col>
-                        <Col span={12}>
-                          <Button
-                              style={{margin:"5px",}}
-                                fullWidth={true}
-                                type="link"
-                                block
-                                onClick={() => handleResendCode()}
-                                disabled={isDisabled}
-                              >{isDisabled ? `Resend Code (${timer}s)` : 'Resend Code'}</Button>  
-                        </Col>
-                        
-                      </Row>
-                      </Form.Item>
-                    </Form>
-            </Card>
-    ) : (
-
+       
       <Card style={{ margin: 'auto', maxWidth: '600px', marginTop:"150px"}}>
         
         <Divider>  <h1 style={{textAlign:"center"}}>
@@ -390,7 +332,7 @@ export default function Login() {
         
       </Card>
        
-    )}
+
   </div>
   );
 }

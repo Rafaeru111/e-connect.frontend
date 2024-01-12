@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { 
     Available,
     addData,
@@ -21,6 +21,9 @@ import {
     PlusOutlined,
     InboxOutlined
     } from '@ant-design/icons';
+
+
+
 import Swal from 'sweetalert2'
 import utils from '../../../helpers/utils'
 
@@ -40,7 +43,9 @@ import {
     InputNumber,
     Upload,
     Image,
-    Card
+    Card,
+    Tag,
+    theme
   } from "antd";
 
   import ImgCrop from 'antd-img-crop';
@@ -83,6 +88,70 @@ const [searchCatValue, setSearchCatValue] = useState("");
 
 //----------------|forda upload Ddata|---------------------------
 const [imageHandler, setImage] = useState('');
+
+
+// tags array 
+const { token } = theme.useToken();
+const [tags, setTags] = useState([]);
+const [inputVisible, setInputVisible] = useState(false);
+const [inputValue, setInputValue] = useState('');
+
+const inputRef = useRef(null);
+useEffect(() => {
+  if (inputVisible) {
+    inputRef.current?.focus();
+  }
+}, [inputVisible]);
+
+const handleClose = (removedTag) => {
+  const newTags = tags.filter((tag) => tag !== removedTag);
+  console.log(newTags);
+  setTags(newTags);
+};
+const showInput = () => {
+  setInputVisible(true);
+};
+const handleInputChange = (e) => {
+  setInputValue(e.target.value);
+
+};
+const handleInputConfirm = () => {
+  if (inputValue && tags.indexOf(inputValue) === -1) {
+    setTags([...tags, inputValue]);
+  }
+  setInputVisible(false);
+  setInputValue('');
+};
+
+const forMap = (tag) => {
+  const tagElem = (
+    <Tag
+      closable
+      onClose={(e) => {
+        e.preventDefault();
+        handleClose(tag);
+      }}
+    >
+      {tag}
+    </Tag>
+  );
+  return (
+    <span
+      key={tag}
+      style={{
+        display: 'inline-block',
+      }}
+    >
+      {tagElem}
+    </span>
+  );
+};
+
+const tagChild = tags.map(forMap);
+  const tagPlusStyle = {
+    background: token.colorBgContainer,
+    borderStyle: 'dashed',
+  };
 
 
             const customFileUpload = async (info) => {
@@ -320,6 +389,7 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
                     property_type_id, 
                     property_name, 
                     property_description,
+                    property_specs,
                     imageHandler,
                     starting_at,
                     );
@@ -851,8 +921,37 @@ console.error(error);
                                    ]}
                                   >
                                      <Input.TextArea />
-                                  </Form.Item>
-
+                                  </Form.Item>           
+                               <p>Specs:</p>
+                                      <div style={{ marginBottom: 16 }}>
+                                      
+                                          {tagChild}
+                                       
+                                      </div>
+                                      {inputVisible ? (
+                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <Input
+                                          ref={inputRef}
+                                          type="text"
+                                          size="small"
+                                          style={{
+                                            width: 200,
+                                          }}
+                                          value={inputValue}
+                                          onChange={handleInputChange}
+                                          onBlur={handleInputConfirm}
+                                          onPressEnter={handleInputConfirm}
+                                        />
+                                      </div>
+                                      ) : (
+                                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <Tag onClick={showInput} style={tagPlusStyle}>
+                                          <PlusOutlined /> Add Property Specs
+                                        </Tag>
+                                        </div>
+                                      )}
+                                
+                                    <br/>
                                   <Form.Item
                                    label="Starts At"
                                    name="starting_at"

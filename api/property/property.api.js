@@ -39,9 +39,9 @@ import axios from "../../helpers/axios"
 
     
 //----------------------------Adding of the Users---------------------------   
-    export const addData = async (property_type_id, property_name, property_description, property_image, starting_at) => {
+    export const addData = async (property_type_id, property_name, property_description,property_specs, property_image,property_video, starting_at) => {
         return axios
-          .post("/api/property_items/create-property", { property_type_id, property_name, property_description, property_image, starting_at })
+          .post("/api/property_items/create-property", { property_type_id, property_name, property_description,property_specs, property_image,property_video, starting_at })
           .then((res) => {
             return res;
           })
