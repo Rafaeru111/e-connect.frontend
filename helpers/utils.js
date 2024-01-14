@@ -1,7 +1,7 @@
 import {
   Tag
 } from "antd";
-
+import Compressor from 'compressorjs';
 import { getOne } from "../api/user.api";
 
 //-------------------------------------| Functions |-------------------------------------
@@ -86,11 +86,29 @@ const statusTag = (status) =>{
         );
       }
 
+
+      //compress the file using compressor
+
+      const compressFile = (file) => {
+        return new Promise((resolve, reject) => {
+            new Compressor(file, {
+                quality: 0.5, // Adjust the quality as needed
+                success(result) {
+                    resolve(result);
+                },
+                error(error) {
+                    reject(error);
+                },
+            });
+        });
+    };
+
+
     
   module.exports = {
     convertDate,
     roleTag,
     statusTag,
-
+    compressFile,
 };
 

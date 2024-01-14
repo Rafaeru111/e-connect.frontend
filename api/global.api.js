@@ -6,7 +6,7 @@ export const handleFileUpload = async (file) => {
   formData.append('categoryImage', file);
 
   try {
-    const response = await axios.post('https://econnect-api.orientaldevs.com/e-connect-api2/upload', formData, {
+    const response = await axios.post('https://econnect-api.mjc-econnect.com/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
