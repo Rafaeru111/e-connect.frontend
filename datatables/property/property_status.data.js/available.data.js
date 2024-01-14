@@ -46,7 +46,8 @@ import {
     Image,
     Card,
     Tag,
-    theme
+    theme,
+    Space
   } from "antd";
 
   import ImgCrop from 'antd-img-crop';
@@ -283,8 +284,10 @@ const tagChild = tags.map(forMap);
                       Swal.fire({
                           icon: "error",
                           title: "File too large",
-                          text: "The compressed file size is larger than 100 MB. Please choose a smaller file.",
-                      });
+                          text: "Your file size is larger than 100 MB. Please choose a smaller file or You can compress your video here until it gets below 100mb",
+                          footer: '<a href="https://www.freeconvert.com/video-compressor" target="_blank">Convert it Here for Free</a>'
+                          
+                        });
                       return false;
                   }
 
@@ -354,9 +357,12 @@ const tagChild = tags.map(forMap);
             title: "Property Image",
             key: "property_image",
             render: (_, params) => {
+              const firstImageSrc = Array.isArray(params.property_image) && params.property_image.length > 0
+              ? params.property_image[0]
+              : "/logo.png";
                 return (
                   <Image
-                    src={params.property_image}
+                    src={firstImageSrc}
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src =
@@ -542,6 +548,20 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
 
 
           const handleOk = () => {
+
+
+            const tagslength = tags.length
+              if(tagslength===0){
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Give atleast 1 Spec",
+                  error,
+                });
+
+                  return false
+              }
+
             setConfirmLoading(true)
             formAdd
                   .validateFields()
@@ -856,12 +876,12 @@ const handleCancel_image = () => setPreviewOpen(false);
   );
 
 
-  const handlcheck_arrays = ()=>  {
+  // const handlcheck_arrays = ()=>  {
     
-    console.log("This is Tags", tags)
-    console.log("This is file list", fileList)
-    console.log("this is the video", imageHandler)
-  }
+  //   console.log("This is Tags", tags)
+  //   console.log("This is file list", fileList)
+  //   console.log("this is the video", imageHandler)
+  // }
 
 
     return(
@@ -1026,6 +1046,23 @@ const handleCancel_image = () => setPreviewOpen(false);
               </Row> <br/>
 
               <Row gutter={16}>
+                    <Col span={24}>
+                        <b>Property Specs</b>   <br/>
+                        <Space size={[0, 'small']} wrap> 
+                            {
+                         
+                            viewData?.property_specs?.map((tag, index) => (
+                              <Tag key={index} bordered={false} closable={index >= 2}>
+                                {tag}
+                              </Tag>
+                            ))}
+                          </Space>
+                           
+                    </Col>
+              </Row>
+                <br/>
+
+              <Row gutter={16}>
                     <Col span={12}>
                         <b>Starting At:</b>   <br/>
                             {viewData?.starting_at}
@@ -1039,25 +1076,48 @@ const handleCancel_image = () => setPreviewOpen(false);
                    
               </Row>
               <br/>
-              <Row gutter={16}>
-                    <Col span={12}>
-                    <b>Image:</b>   <br/>
-                                     <Image 
-                                              width={250}
-                                              src={viewData.property_image}
-                                              preview={false}
-                                              onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/logo.png";
-                                              }}
-                                              alt="img"
-                                            />
-                    </Col>
-                    <Col span={12}>
+              <Row gutter={16}> 
+                    <Col span={24}>
                     <b>Description:</b>   <br/>
                             {viewData?.property_description}
                     </Col>  
-
+                    <Col span={24}>
+                    <b>Image:</b>   <br/>
+                                    
+                               <Image.PreviewGroup
+                                  preview={{
+                                    onChange: (current, prev) => console.log(`current index: ${current}, prev index: ${prev}`),
+                                  }}
+                                >
+                                  {viewData?.property_image?.map((imageUrl, index) => (
+                                    <Image
+                                      key={index}
+                                      width={100}
+                                      style={{padding: '5px'}}
+                                      src={imageUrl}
+                                      preview={{
+                                        mask: <EyeOutlined/>,
+                                      }}
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/logo.png";
+                                      }}
+                                    />
+                                  ))}
+                                </Image.PreviewGroup>
+                    </Col>
+                   
+                    <Col span={24}>
+                    <b>Video:</b>   <br/>
+                                          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                  <ReactPlayer
+                                                      url={viewData?.property_video?.startsWith('https://') ? viewData?.property_video : `https://${viewData?.property_video}`}
+                                                      controls // Optional: Show video controls
+                                                      width="100%" // Optional: Set video width
+                                                      height="auto" // Optional: Set video height
+                                                    />
+                                          </div>
+                    </Col>  
               </Row> 
               <br/>
             </Modal>
@@ -1167,9 +1227,11 @@ const handleCancel_image = () => setPreviewOpen(false);
                                   >
                                           <InputNumber style={{width:"100%"}} placeholder="Input currency" defaultValue={0} step={0.01} />
                                   </Form.Item>
-                                  <Divider> Images   <Button onClick={() => handlcheck_arrays()}>
+                                  <Divider> Images </Divider>  
+                                  
+                                  {/* <Button onClick={() => handlcheck_arrays()}>
                                                        check Arays
-                                                      </Button></Divider>
+                                                      </Button> */}
                                   <Row>
                                           <Col span={24}>
                                                   <ImgCrop
@@ -1205,7 +1267,7 @@ const handleCancel_image = () => setPreviewOpen(false);
                                           </Col>
                                 </Row>
 
-                                <Divider> Video </Divider>
+                                <Divider> Video <span>(Optional)</span></Divider>
                                   <Row>
                                     <Col span={24}>
                                 
