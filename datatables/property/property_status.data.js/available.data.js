@@ -401,6 +401,7 @@ const tagChild = tags.map(forMap);
                         <Button
                             size="middle"
                             shape="circle"
+                            disabled={true}
                             onClick={() => {
                             handleEdit(params._id);
                             }}

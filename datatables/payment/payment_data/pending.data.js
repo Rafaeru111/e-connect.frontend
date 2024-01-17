@@ -58,7 +58,6 @@ export const Pending_data = () => {
 //------------------| For Edit Value |------------------
 const [editId, seteditId] = useState('');
 
-
     const actionColumn = [
       {
         dataIndex: "reference_code",

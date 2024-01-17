@@ -111,7 +111,7 @@ import utils from '../helpers/utils'
 
 export const checkBilling = async (userId) => {
   return axios
-  .get("/api/billing/check-billed-pending", {userId})
+  .get(`/api/billing/check-billed?userId=${userId}`)
   .then((res) => {
       return res;
   })

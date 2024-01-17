@@ -161,4 +161,16 @@ export const Refunded = async (page, pageSize) => {
         });
     };
 
+    export const Verify = async (code) => {
+      return axios
+        .patch("/api/payment/to-verify", {code})
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          return err.response;
+        });
+    };
+
+
     

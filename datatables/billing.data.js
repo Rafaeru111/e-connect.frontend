@@ -27,7 +27,8 @@ import {
     Divider,
     Tag,
     InputNumber,
-    DatePicker
+    DatePicker,
+    List
   } from "antd";
 
   const { Text,Paragraph } = Typography;
@@ -153,7 +154,7 @@ const showModal = (id) => {
 }; //For showing the Modal upon clicking the data
    
 const cancelModal = () => {
-    setAddOpen(true);
+    setAddOpen(false);
     setId('')
     formAdd.resetFields();
 }; //For
@@ -228,12 +229,15 @@ const cancelModal = () => {
 
 
 //-------------------------| HANDLE for MODALS Viewing |----------------------------- 
-  const handleView = async (data) => {
+  const handleView = async (userId) => {
+    console.log(userId)
     try {
-       const viewdata1 = await checkBilling(data);
+       const viewdata1 = await checkBilling(userId);
       if (viewdata1.status === 200) {
-        //setViewData(viewdata1.data); // Assuming the response object contains the data as an object
-            console.log(viewdata1.data)
+        setOpenView(true)
+        setViewData(viewdata1.data); // Assuming the response object contains the data as an object
+
+         console.log(viewdata1.data)
       }
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -241,6 +245,28 @@ const cancelModal = () => {
   };
 
 
+    const columns = [
+      {
+        title: 'Billing Type',
+        dataIndex: 'billing_type',
+        key: 'billing_type',
+      },
+      {
+        title: 'Bill',
+        dataIndex: 'bill',
+        key: 'bill',
+      },
+      {
+        title: 'Reference Code',
+        dataIndex: 'reference_code',
+        key: 'reference_code',
+      },
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+      },
+    ];
 
     return(
        <>      
@@ -261,7 +287,24 @@ const cancelModal = () => {
               width={800}
             >
              <Divider><h3 style={{color: "green"}}>Viewing Data</h3></Divider>
-              
+             <List
+                    dataSource={viewData}
+                    renderItem={(item) => (
+                    <List.Item>
+                        <List.Item.Meta
+                        title={item.billing_type}
+                        description={`Bill: ${item.bill}`}
+                        />
+                           <div>{item.reference_code} 
+                            <br/>
+                            
+                           <Tag color='gray'>
+                           {item.status}
+                                </Tag>
+                            </div>
+                    </List.Item>
+                    )}
+                />
             </Modal>
             
        {/* ----------------------------------------------| Modal for Adding new Datas |---------------------------------------------------  */}            

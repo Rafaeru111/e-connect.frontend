@@ -297,7 +297,6 @@ const formatter2 = (value) =>
         <h3 style={{textAlign:"center"}}>Scheduled Visitation Today.</h3>
           <Card bordered={false} title={"Date Today: " + utils.convertDate(DateToday)} style={{borderRadius: 0}}>
               <Table
-          
                     style={{width: "100%"}}
                     //columns={actionColumn}
                     //dataSource={getTransacToday}

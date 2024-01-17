@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { 
     Pending,
     addData,
@@ -21,6 +21,10 @@ import {
     PlusOutlined,
     InboxOutlined
     } from '@ant-design/icons';
+
+
+    import ReactPlayer from 'react-player/lazy'
+
 import Swal from 'sweetalert2'
 import utils from '../../../helpers/utils'
 
@@ -40,12 +44,23 @@ import {
     InputNumber,
     Upload,
     Image,
-    Card
+    Card,
+    Tag,
+    theme,
+    Space
   } from "antd";
 
   import ImgCrop from 'antd-img-crop';
   
   const { Text,Paragraph } = Typography;
+
+  const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 export const Pending_Data = () => {
     //managing state
@@ -65,7 +80,6 @@ export const Pending_Data = () => {
     //-----------------| View States |-----------------------------
     const [openView, setOpenView] = useState(false);
     const [openEditView, setOpenEditView] = useState(false);
-  
     const [viewData, setViewData] = useState({});
 
 
@@ -83,27 +97,136 @@ const [searchCatValue, setSearchCatValue] = useState("");
 
 //----------------|forda upload Ddata|---------------------------
 const [imageHandler, setImage] = useState('');
+const [imggroup, setImgGroup] = useState([]);
+
+const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [fileList, setFileList] = useState([]);
+
+// tags array 
+const { token } = theme.useToken();
+const [tags, setTags] = useState([]);
+const [inputVisible, setInputVisible] = useState(false);
+const [inputValue, setInputValue] = useState('');
+
+const inputRef = useRef(null);
+
+useEffect(() => {
+  if (inputVisible) {
+    inputRef.current?.focus();
+  }
+}, [inputVisible]);
 
 
+const handleClose = (removedTag) => {
+  const newTags = tags.filter((tag) => tag !== removedTag);
+  console.log(newTags);
+  setTags(newTags);
+};
+const showInput = () => {
+  setInputVisible(true);
+};
+const handleInputChange = (e) => {
+  setInputValue(e.target.value);
+
+};
+
+const handleInputConfirm = () => {
+  if (inputValue && tags.indexOf(inputValue) === -1) {
+    setTags([...tags, inputValue]);
+  }
+  setInputVisible(false);
+  setInputValue('');
+};
+
+const forMap = (tag) => {
+  const tagElem = (
+    <Tag
+      closable
+      onClose={(e) => {
+        e.preventDefault();
+        handleClose(tag);
+      }}
+    >
+      {tag}
+    </Tag>
+  );
+  return (
+    <span
+      key={tag}
+      style={{
+        display: 'inline-block',
+      }}
+    >
+      {tagElem}
+    </span>
+    
+  );
+};
+
+const tagChild = tags.map(forMap);
+  const tagPlusStyle = {
+    background: token.colorBgContainer,
+    borderStyle: 'dashed',
+  };
+
+
+
+  // const [imggroup, setImgGroup] = useState([]);
             const customFileUpload = async (info) => {
                 if (info.file.status !== 'uploading') {
                 console.log(info.file);
                 }
                 const file = info.file
-                
+                console.log(file);
                 if (file) {
-                try {
-                    const response = await handleFileUpload(file);
-                    const url = response.data.uri;
-                    setImage(url);
-                    return url;
-                } catch (error) {
-                    message.error(`${info.file.name} Error ${error}`);
-                }
+                    try {
+                          const response = await handleFileUpload(file);
+                          console.log(response)
+                          const img = response.data[0]
+                          const url = response.data[0].uri;
+                         
+                          setFileList((prevFileList) => [
+                            ...prevFileList.filter((prevFile) => prevFile.status !== 'uploading' || prevFile.status !== 'uploading'),
+                            {
+                              uid: img._id,
+                              name: file.filename,
+                              status: 'done',
+                              url: url,
+                            },
+                          ]);
+
+
+                          console.log('Server response data: hehehehe --', fileList);
+                        
+                          //setImage(url);
+                      
+                          if (url && imggroup.indexOf(url) === -1) {
+                            setImgGroup([...imggroup, url]);
+                          
+                          }
+
+                          Swal.fire('Uploaded!', '', 'success')
+                       
+                    } catch (error) {
+                      
+                        console.log(`Upload Failed`);
+                        Swal.fire({
+                          icon: "error",
+                          title: "Oops...",
+                          text: `Upload Failed with an unknown error --- ${error}`,
+                        });
+
+                    }
             
                 } else{
-                message.error(`${info.file.name} file upload failed with the Under this New Updated Code`);
-            
+                    console.log(`${info.file.name} file upload failed with the Under this New Updated Code`);
+                    Swal.fire({
+                      icon: "error",
+                      title: "Oops...",
+                      text: `${info.file.name} file upload failed with the Under this New Updated Code`,
+                    });
                 }
             };
 
@@ -113,31 +236,95 @@ const [imageHandler, setImage] = useState('');
               }
               const file = info.file
               
-              if (file) {
-              try {
-                  const response = await handleFileUpload(file);
-                  const url = response.data.uri;
-                 
-                  Swal.fire('Saved!', '', 'success')
-                 
-                  editChange(url, 'property_image')
-
-
-                  return url;
-              } catch (error) {
-                  message.error(`${info.file.name} Error ${error}`);
-              }
-          
-              } else{
-              message.error(`${info.file.name} file upload failed with the Under this New Updated Code`);
-          
-              }
+                  if (file) {
+                  try {
+                      const response = await handleFileUpload(file);
+                      const url = response.data[0].uri;
+                         
+                      editChange(url, 'property_image')
+                    
+                      Swal.fire('Saved!', '', 'success')
+                    
+                  } catch (error) {
+                    console.log(`${info.file.name} Error ${error}`);
+                  }
+              
+                  } else{
+                      console.log(`${info.file.name} file upload failed with the Under this New Updated Code`);
+                      Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: `${info.file.name} file upload failed with the Under this New Updated Code`,
+                      });
+                  }
           };
 
+          const customFileUploadVideo = async (info) => {
+            if (info.file.status !== 'uploading') {
+            console.log(info.file);
+            }
+            const file = info.file
+            
+                if (file) {
+                try {
+
+
+                      const loadingAlert = Swal.fire({
+                        title: 'Uploading...',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        onBeforeOpen: () => {
+                          Swal.showLoading();
+                      }
+                    });
+                    
+                    //adding restriction for file too large
+                    if (file.size > 100 * 1024 * 1024) { // 300 MB in bytes
+                      loadingAlert.close();
+                      Swal.fire({
+                          icon: "error",
+                          title: "File too large",
+                          text: "Your file size is larger than 100 MB. Please choose a smaller file or You can compress your video here until it gets below 100mb",
+                          footer: '<a href="https://www.freeconvert.com/video-compressor" target="_blank">Convert it Here for Free</a>'
+                          
+                        });
+                      return false;
+                  }
+
+                    //const compressed_file = await utils.compressedFile(file)
+
+           
+                    const response = await handleFileUpload(file);
+                    const url = response.data[0].uri;
+                    loadingAlert.close();
+                    Swal.fire('Uploaded!', '', 'success')
+
+                    setImage(url);
+               
+                } catch (error) {
+                  console.log(`${info.file.name} Error ${error}`);
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: `Error -- ${error}`,
+                  });
+                }
+            
+                } else{
+                    console.log(`${info.file.name} file upload failed with the Under this New Updated Code`);
+                    Swal.fire({
+                      icon: "error",
+                      title: "Oops...",
+                      text: `${info.file.name} file upload failed with the Under this New Updated Code`,
+                    });
+                }
+        };
+
+
             const uploadProps = {
-                name: 'imgupload',
+                name: 'vidupload',
                 showUploadList: false,
-                customRequest: customFileUpload,
+                customRequest: customFileUploadVideo,
                 };
 
               const uploadPropsEdit = {
@@ -146,17 +333,18 @@ const [imageHandler, setImage] = useState('');
                   customRequest: customFileUploadEdit,
                   };
 
-    const actionColumn = [
-      {
-        dataIndex: "property_type_id",
-        title: "Property Type",
-        key: "property_type_id",
-        render: (property_type_id) => {
-            const category = forDrop.find((cat) => cat._id === property_type_id);
-            const categoryName = category ? category.property_type_name : "";
-            return <span>{categoryName}</span>;
-          },
-      },
+                  
+                  const actionColumn = [
+                    {
+                      dataIndex: "property_type_id",
+                      title: "Property Type",
+                      key: "property_type_id",
+                      render: (property_type_id) => {
+                          const category = forDrop.find((cat) => cat._id === property_type_id);
+                          const categoryName = category ? category.property_type_name : "";
+                          return <span>{categoryName}</span>;
+                        },
+                    },
 
             {
                 dataIndex: "property_name",
@@ -169,9 +357,12 @@ const [imageHandler, setImage] = useState('');
             title: "Property Image",
             key: "property_image",
             render: (_, params) => {
+              const firstImageSrc = Array.isArray(params.property_image) && params.property_image.length > 0
+              ? params.property_image[0]
+              : "/logo.png";
                 return (
                   <Image
-                    src={params.property_image}
+                    src={firstImageSrc}
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src =
@@ -210,6 +401,7 @@ const [imageHandler, setImage] = useState('');
                         <Button
                             size="middle"
                             shape="circle"
+                            disabled={true}
                             onClick={() => {
                             handleEdit(params._id);
                             }}
@@ -316,12 +508,18 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
                 starting_at,
               } = values;
 
+              const arrayOfURIs = fileList.map(item => item.url);
+              //const 
+
                   const response = await addData(
                     property_type_id, 
                     property_name, 
                     property_description,
+                    tags,
+                    arrayOfURIs,
                     imageHandler,
-                    starting_at,
+                    starting_at
+
                     );
             
                     if (response.status === 200) {
@@ -333,6 +531,9 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
                             fetchData(1, currentPageSize);
 
                             formAdd.resetFields();
+                            setTags([])
+                            setFileList([])
+                            setImage('')
 
                       } else {
                         Swal.fire({
@@ -348,6 +549,20 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
 
 
           const handleOk = () => {
+
+
+            const tagslength = tags.length
+              if(tagslength===0){
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Give atleast 1 Spec",
+                  error,
+                });
+
+                  return false
+              }
+
             setConfirmLoading(true)
             formAdd
                   .validateFields()
@@ -372,9 +587,45 @@ const showModal = () => {setAddOpen(true);}; //For showing the Modal upon clicki
                   });
               };
 
-          const handleCancel = () => {
-            console.log('Clicked cancel button');
-            setAddOpen(false);
+
+              //close modal
+          const handleCancel = async() => {
+       
+                try {
+                  const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                      confirmButton: "delete-button",
+                      cancelButton: "veiwButton1",
+                    },
+                    buttonsStyling: true,
+                  });
+              
+                  const result = await swalWithBootstrapButtons.fire({
+                    title: "Are you sure?",
+                    text: "You want to Discard Changes?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Ok",
+                    cancelButtonText: "Cancel",
+                    reverseButtons: true,
+                  });
+              
+                  if (result.isConfirmed) {
+                  
+                    setAddOpen(false);
+                    setTags([])
+                    setFileList([])
+                    setImage('')
+                    formAdd.resetFields();
+
+                  } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    //swalWithBootstrapButtons.fire("Cancelled", "Done", "error");
+                    return false
+                  }
+                } catch (error) {
+                  console.error(error);
+                }
+
           };
 
 //-------------------------| HANDLE for MODALS Viewing |----------------------------- 
@@ -593,6 +844,47 @@ console.error(error);
 }
 };
 
+const handleCancel_image = () => setPreviewOpen(false);
+
+      const handlePreview = async (file) => {
+        if (!file.url && !file.preview) {
+          file.preview = await getBase64(file.originFileObj);
+        }
+        setPreviewImage(file.url || file.preview);
+        setPreviewOpen(true);
+        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+      };
+
+  const handleChange_image = (
+    { fileList: newFileList }) => setFileList(newFileList);
+  const uploadButton = (
+    <button
+      style={{
+        border: 0,
+        background: 'none',
+      }}
+      type="button"
+    >
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </button>
+  );
+
+
+  // const handlcheck_arrays = ()=>  {
+    
+  //   console.log("This is Tags", tags)
+  //   console.log("This is file list", fileList)
+  //   console.log("this is the video", imageHandler)
+  // }
+
+
     return(
        <>      
         <Divider orientation="right">
@@ -708,6 +1000,10 @@ console.error(error);
                                           <p className="ant-upload-text">Click or drag file to this area to upload</p>
                                         </Upload.Dragger>
                                     </ImgCrop>
+
+                                    
+
+
                           </Col> 
                             <Col span={12} style={{ textAlign: 'center' }}>
                                   <Image 
@@ -751,6 +1047,23 @@ console.error(error);
               </Row> <br/>
 
               <Row gutter={16}>
+                    <Col span={24}>
+                        <b>Property Specs</b>   <br/>
+                        <Space size={[0, 'small']} wrap> 
+                            {
+                         
+                            viewData?.property_specs?.map((tag, index) => (
+                              <Tag key={index} bordered={false} closable={index >= 2}>
+                                {tag}
+                              </Tag>
+                            ))}
+                          </Space>
+                           
+                    </Col>
+              </Row>
+                <br/>
+
+              <Row gutter={16}>
                     <Col span={12}>
                         <b>Starting At:</b>   <br/>
                             {viewData?.starting_at}
@@ -764,25 +1077,48 @@ console.error(error);
                    
               </Row>
               <br/>
-              <Row gutter={16}>
-                    <Col span={12}>
-                    <b>Image:</b>   <br/>
-                                     <Image 
-                                              width={250}
-                                              src={viewData.property_image}
-                                              preview={false}
-                                              onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/logo.png";
-                                              }}
-                                              alt="img"
-                                            />
-                    </Col>
-                    <Col span={12}>
+              <Row gutter={16}> 
+                    <Col span={24}>
                     <b>Description:</b>   <br/>
                             {viewData?.property_description}
                     </Col>  
-
+                    <Col span={24}>
+                    <b>Image:</b>   <br/>
+                                    
+                               <Image.PreviewGroup
+                                  preview={{
+                                    onChange: (current, prev) => console.log(`current index: ${current}, prev index: ${prev}`),
+                                  }}
+                                >
+                                  {viewData?.property_image?.map((imageUrl, index) => (
+                                    <Image
+                                      key={index}
+                                      width={100}
+                                      style={{padding: '5px'}}
+                                      src={imageUrl}
+                                      preview={{
+                                        mask: <EyeOutlined/>,
+                                      }}
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/logo.png";
+                                      }}
+                                    />
+                                  ))}
+                                </Image.PreviewGroup>
+                    </Col>
+                   
+                    <Col span={24}>
+                    <b>Video:</b>   <br/>
+                                          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                  <ReactPlayer
+                                                      url={viewData?.property_video?.startsWith('https://') ? viewData?.property_video : `https://${viewData?.property_video}`}
+                                                      controls // Optional: Show video controls
+                                                      width="100%" // Optional: Set video width
+                                                      height="auto" // Optional: Set video height
+                                                    />
+                                          </div>
+                    </Col>  
               </Row> 
               <br/>
             </Modal>
@@ -851,8 +1187,37 @@ console.error(error);
                                    ]}
                                   >
                                      <Input.TextArea />
-                                  </Form.Item>
-
+                                  </Form.Item>           
+                               <p>Specs:</p>
+                                      <div style={{ marginBottom: 16 }}>
+                                      
+                                          {tagChild}
+                                       
+                                      </div>
+                                      {inputVisible ? (
+                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <Input
+                                          ref={inputRef}
+                                          type="text"
+                                          size="small"
+                                          style={{
+                                            width: 200,
+                                          }}
+                                          value={inputValue}
+                                          onChange={handleInputChange}
+                                          onBlur={handleInputConfirm}
+                                          onPressEnter={handleInputConfirm}
+                                        />
+                                      </div>
+                                      ) : (
+                                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <Tag onClick={showInput} style={tagPlusStyle}>
+                                          <PlusOutlined /> Add Property Specs
+                                        </Tag>
+                                        </div>
+                                      )}
+                                
+                                    <br/>
                                   <Form.Item
                                    label="Starts At"
                                    name="starting_at"
@@ -863,38 +1228,78 @@ console.error(error);
                                   >
                                           <InputNumber style={{width:"100%"}} placeholder="Input currency" defaultValue={0} step={0.01} />
                                   </Form.Item>
+                                  <Divider> Images </Divider>  
                                   
+                                  {/* <Button onClick={() => handlcheck_arrays()}>
+                                                       check Arays
+                                                      </Button> */}
                                   <Row>
-                                    <Col span={12}>
+                                          <Col span={24}>
+                                                  <ImgCrop
+                                                      modalTitle="Finalize Image Upload"
+                                                      rotationSlider
+                                                      aspectSlider
+                                                      showGrid
+                                                      showReset
+                                                      >
+                                                       <Upload
+                                                          //action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                                          listType="picture-card"
+                                                          fileList={fileList}
+                                                          onPreview={handlePreview}
+                                                          onChange={handleChange_image}
+                                                          customRequest = {customFileUpload}
+                                                          // {...uploadProps}
+                                                        >
+                                                          {fileList.length >= 8 ? null : uploadButton}
+                                                        </Upload>
+                                           </ImgCrop>
+
+                                                   <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel_image}>
+                                                          <img
+                                                            alt="example"
+                                                            style={{
+                                                              width: '100%',
+                                                            }}
+                                                            src={previewImage}
+                                                          />
+                                                        </Modal>
+
+                                          </Col>
+                                </Row>
+
+                                <Divider> Video <span>(Optional)</span></Divider>
+                                  <Row>
+                                    <Col span={24}>
                                 
-                                          <ImgCrop
-                                              modalTitle="Finalize Image Upload"
-                                              rotationSlider
-                                              aspectSlider
-                                              showGrid
-                                              showReset
-                                              >
+                                        
                                                 <Upload.Dragger name="files" {...uploadProps}>
                                                     <p className="ant-upload-drag-icon" >
                                                       <InboxOutlined />
                                                     </p>
                                                     <p className="ant-upload-text">Click or drag file to this area to upload</p>
                                                   </Upload.Dragger>
-                                              </ImgCrop>
+                                      
                                     </Col> 
-                                      <Col span={12} style={{ textAlign: 'center' }}>
-                                            <Image 
-                                              width={150}
-                                              src={imageHandler}
-                                              preview={false}
-                                              onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/logo.png";
-                                              }}
-                                              alt="img"
-                                            />
+                                    Preview:
+                                          <Col span={24} style={{ textAlign: 'center' }}>
+                                            {/* https://www.youtube.com/watch?v=aoGgsP4VrcM&list=RDaoGgsP4VrcM&start_radio=1&rv=j2k1Iqo5xw4 */}
+                                            
+                                             {/* <ReactPlayer url='https://www.youtube.com/watch?v=aoGgsP4VrcM&list=RDaoGgsP4VrcM&start_radio=1&rv=j2k1Iqo5xw4' /> */}
+                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                  <ReactPlayer
+                                                      url={imageHandler.startsWith('https://') ? imageHandler : `https://${imageHandler}`}
+                                                      controls // Optional: Show video controls
+                                                      width="100%" // Optional: Set video width
+                                                      height="auto" // Optional: Set video height
+                                                    />
+                                                    </div>
+
+                                                    
                                           </Col>
                                   </Row>
+
+                              
 
                             </Form>
 
