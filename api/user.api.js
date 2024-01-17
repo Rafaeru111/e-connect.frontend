@@ -85,4 +85,40 @@ import utils from '../helpers/utils'
         });
     };
 
-    
+    //-----------------------
+
+    export const getBillingUsers = async () => {
+      return axios
+      .get(`/api/profile/get-not-billed-user`)
+      .then((res) => {
+          return res;
+      })
+      .catch((err) => {
+          return err.response;
+      });
+  };
+
+  export const addBilling = async (client_id, billing_type, bill, billing_date) => {
+    return axios
+    .post("/api/billing/create-billing", {client_id, billing_type, bill, billing_date})
+    .then((res) => {
+        return res;
+    })
+    .catch((err) => {
+        return err.response;
+    });
+};
+
+export const checkBilling = async (userId) => {
+  return axios
+  .get("/api/billing/check-billed-pending", {userId})
+  .then((res) => {
+      return res;
+  })
+  .catch((err) => {
+      return err.response;
+  });
+};
+
+
+

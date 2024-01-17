@@ -17,7 +17,8 @@ import {
   DeleteOutlined,
   AuditOutlined,
   EnvironmentOutlined,
-  HomeOutlined 
+  HomeOutlined,
+  FormOutlined
 } from "@ant-design/icons";
 import { 
   Layout, 
@@ -60,6 +61,8 @@ const items = [
     getItem("Inventory Transaction Management", "/pagers/inventory/inventory_transaction.page",<AuditOutlined />),
     //getItem("Sales Report", "/pagers/inventory/inventory_sales_report.page",<DollarCircleOutlined />),,
   ]),
+
+  getItem("Billing", "/pagers/payment/billing.page",  <FormOutlined />),
 
   getItem("Payment Record", "/pagers/payment/payment.page",  <DollarCircleOutlined />),
 

@@ -61,9 +61,9 @@ const [editId, seteditId] = useState('');
 
     const actionColumn = [
       {
-        dataIndex: "application_id",
-        title: "Application Id",
-        key: "application_id",
+        dataIndex: "reference_code",
+        title: "Reference code",
+        key: "reference_code",
       },
 
       {
@@ -87,26 +87,6 @@ const [editId, seteditId] = useState('');
           },
       },
       
-        {
-          dataIndex: "payment_date",
-          title: "Payment Date",
-          key: "payment_date",
-          render: (payment_date) => {
-            const date = new Date(payment_date);
-            const options = {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            };
-
-            return <span>{date.toLocaleString(undefined, options)}</span>;
-
-          },
-        },
-
         {
           dataIndex: "action",
           title: "Action",

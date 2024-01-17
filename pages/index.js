@@ -36,7 +36,7 @@ import Inventory_Sales_Report from './pagers/inventory/inventory_sales_report.pa
 
 //------------------------| Payment Management |----------------------------------------
 import Payment_Page from "./pagers/payment/payment.page"
-
+import Billing_Page from './pagers/payment/billing.page'
 //-----------------------------|Visitor Managements|---------------------------------
 import Visitor_Page from './pagers/visitor/visitor.page'
 
@@ -47,6 +47,8 @@ import Property_Type from './pagers/property/property_type.page'
 
 //-----------------| Client's Application |-----------------------------------
 import Application_Page from './pagers/appointment/application.page'
+
+
 
 const Home = () => {
   const router = useRouter();
@@ -174,7 +176,9 @@ const handleMenuSelect = (key) => {
     
               {/* payment */}
               {selectedKey === '/pagers/payment/payment.page' && <Payment_Page />}
-              
+              {selectedKey === '/pagers/payment/billing.page' && <Billing_Page/>}
+
+
               {/* Visitor */}
               {selectedKey === '/pagers/visitor/visitor.page' && <Visitor_Page />}
 
