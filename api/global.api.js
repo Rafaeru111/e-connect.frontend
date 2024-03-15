@@ -45,6 +45,41 @@ export const getMyProfile = async () => {
 };
 
 
+export const getUsers = async (key) => {
+  return axios
+    .get("/api/profile/get-users",{key})
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+
+export const sendingMessage = async (message, reciever) => {
+  return axios
+    .post("/api/conversation/send-message",{message, reciever})
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+
+export const getChat = async (reciever) => {
+  return axios
+    .get(`/api/conversation/get-my-convos?reciever=${reciever}`)
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
 
 
 // this service is used for upload

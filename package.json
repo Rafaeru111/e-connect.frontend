@@ -7,6 +7,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
+    "@chatscope/chat-ui-kit-react": "^2.0.3",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.13.7",
@@ -31,6 +33,7 @@
     "react-player": "^2.14.1",
     "react-router-dom": "^6.14.1",
     "sass": "^1.63.6",
+    "socket.io-client": "^4.7.5",
     "sweetalert2": "^11.7.12",
     "zustand": "^4.3.8"
   }

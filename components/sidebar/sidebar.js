@@ -18,7 +18,8 @@ import {
   AuditOutlined,
   EnvironmentOutlined,
   HomeOutlined,
-  FormOutlined
+  FormOutlined,
+  MessageOutlined
 } from "@ant-design/icons";
 import { 
   Layout, 
@@ -83,7 +84,7 @@ const items = [
   //   getItem("Password", "/password"),
   // ]),
 
-  
+  getItem("Customer Service", "/pagers/chat.ui.page", <MessageOutlined />),
 
   getItem("Logout", "/logout", <LogoutOutlined />),
 ];
