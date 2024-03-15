@@ -26,7 +26,7 @@ import {
   //const URL = 'https://econnect-io.mjc-econnect.com/';
   import { io } from "socket.io-client";
   const URL = 'ws://localhost:8000';
-
+  import Swal from 'sweetalert2'
 
 const ChatUiPage = () => {
   const [chatting_user, setChatting_user] = useState([]);
@@ -37,7 +37,7 @@ const ChatUiPage = () => {
   const [roomId, setRoomId]  = useState("");
   const [user, setUser] = useState({});
 
-
+  let isEventListenerRegistered = false;
   const socket = io(URL);
 
   const fetchUserProfile = async () => {
@@ -89,69 +89,51 @@ const ChatUiPage = () => {
     getusers();
   }, []); 
 
-    // const chatting_user = [
-    //     {
-    //         info:"this is my last Message",
-    //         lastSenderName:"Message",
-    //         name:"Rafael Vngua",
-    //     },
-    //     {
-    //         info:"this is my last Message",
-    //         lastSenderName:"Message",
-    //         name:"Rafael Vdasdngua",
-    //     },
-    //     {
-    //         info:"this is my last Message",
-    //         lastSenderName:"Message",
-    //         name:"Rafasdaael Vngua",
-    //     }
-    // ]
-
-
-
-
-    //fetching user
- 
-
-    // const joinRoom = (room, _id) => {
   
-    //   const sortedIds = [_id, user._id].sort();
-    //   // Concatenate the sorted IDs to form the room ID
-    //   const roomId = sortedIds.join(':');
-
-    //   socket.disconnect
-
-    //   setRoomId(roomId)
-    //   setGetNameChat(room)
-    //   setRoom(_id)
-    //   setConversation([])
-    //   socket.emit('joinRoom', roomId);
-    // };
-
     const joinRoom = (room, _id) => {
-      const sortedIds = [_id, user._id].sort();
-      const roomId = sortedIds.join(':');
-  
-      // Disconnect existing connection before joining a new room
-      socket.disconnect();
-  
-      // Clear any previous listeners or state related to the previous room
-      socket.off('joinRoom'); // Remove any existing 'joinRoom' event listeners
-      setRoomId(""); // Clear the room ID
-      setGetNameChat(""); // Clear the room name
-      setRoom(""); // Clear the room
-      setConversation([]); // Clear the conversation
-  
-      // Establish a new connection and join the specified room
-      socket.connect();
-      socket.emit('joinRoom', roomId);
-  
-      // Update state with new room information
-      setRoomId(roomId);
-      setGetNameChat(room);
-      setRoom(_id);
-    
-      gettingChat(_id)
+
+      Swal.fire({
+        title: "Are you sure you want to Open Message?",
+        text: "",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, open it!",
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const sortedIds = [_id, user._id].sort();
+          const roomId = sortedIds.join(':');
+      
+          // Disconnect existing connection before joining a new room
+          socket.disconnect();
+      
+          // Clear any previous listeners or state related to the previous room
+          socket.off('joinRoom'); // Remove any existing 'joinRoom' event listeners
+          setRoomId(""); // Clear the room ID
+          setGetNameChat(""); // Clear the room name
+          setRoom(""); // Clear the room
+          setConversation([]); // Clear the conversation
+      
+          // Establish a new connection and join the specified room
+          socket.connect();
+          socket.emit('joinRoom', roomId);
+      
+          // Update state with new room information
+          setRoomId(roomId);
+          setGetNameChat(room);
+          setRoom(_id);
+        
+          gettingChat(_id)
+
+          Swal.fire({
+            title: "Inbox opened!",
+            text: "Your inbox opened",
+            icon: "success"
+          });
+        }
+      });
   };
 
   // Function to handle sending the message
@@ -172,47 +154,80 @@ const ChatUiPage = () => {
     setMessageInputValue("")
 };
 
-socket.on('convo', (data) => {
-  // Handle received message
-    const sender = data.sender
+// socket.on('convo', (data) => {
+//   // Handle received message
+//     const sender = data.sender
 
-            if (sender === user._id) {
-                console.log("You are the Sender");
-                    const params = {
-                      props:{
-                          direction: 'outgoing',
-                          message: data.message,
-                          position: 'single',
-                          sender: sender,
-                      },
-                      footer:{
-                          sentTime:data.date
-                      }
-                  };
+//             if (sender === user._id) {
+//                 console.log("You are the Sender");
+//                     const params = {
+//                       props:{
+//                           direction: 'outgoing',
+//                           message: data.message,
+//                           position: 'single',
+//                           sender: sender,
+//                       },
+//                       footer:{
+//                           sentTime:data.date
+//                       }
+//                   };
 
-                  setConversation((conversation) => [...conversation, params]);
+//                   setConversation((conversation) => [...conversation, params]);
                 
 
-            } else {
-              console.log("You are the reciever");
-                const params = {
-                  props:{
-                      direction: 'incoming',
-                      message: data.message,
-                      position: 'single',
-                      sender: sender,
-                  },
-                  footer:{
-                      sentTime:data.date
-                  }
-              };
+//             } else {
+//               console.log("You are the reciever");
+//                 const params = {
+//                   props:{
+//                       direction: 'incoming',
+//                       message: data.message,
+//                       position: 'single',
+//                       sender: sender,
+//                   },
+//                   footer:{
+//                       sentTime:data.date
+//                   }
+//               };
 
-              setConversation((conversation) => [...conversation, params]);
+//               setConversation((conversation) => [...conversation, params]);
        
   
-            }
+//             }
 
 
+// });
+
+socket.on('convo', (data) => {
+  const sender = data.sender;
+
+  const newMessage = {
+      props: {
+          direction: sender === user._id ? 'outgoing' : 'incoming',
+          message: data.message,
+          position: 'single',
+          sender: sender,
+      },
+      footer: {
+          sentTime: data.date
+      }
+  };
+
+  // Check if the new message already exists in the conversation array
+  const exists = conversation.some(msg => {
+      // Check if the messages have the same content
+      const sameContent = msg.props.message === newMessage.props.message;
+      // Check if the messages have the same sender
+      const sameSender = msg.props.sender === newMessage.props.sender;
+      // Check if the messages were sent at the same time
+      const sameTime = msg.footer.sentTime === newMessage.footer.sentTime;
+
+      return sameContent && sameSender && sameTime;
+  });
+
+  if (!exists) {
+      // Add the new message to the conversation array
+      setConversation((conversation) => [...conversation, newMessage]);
+  }
 });
 
 const [searchTerm, setSearchTerm] = useState('');
@@ -229,7 +244,7 @@ const [searchTerm, setSearchTerm] = useState('');
     <Card bordered={true} style={{borderRadius: 0}}>
           <Divider orientation="left">
             <Title level={3} >
-              CHAT SUPPORT  {user.firstName}
+              CHAT SUPPORT - User Name: {user.firstName}  {user.lastName}
             </Title>
           </Divider>
        
