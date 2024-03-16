@@ -23,9 +23,9 @@ import {
     const { Title } = Typography;
     import { AudioOutlined } from '@ant-design/icons';
     const { Search } = Input;
-  //const URL = 'https://econnect-io.mjc-econnect.com/';
+  const URL = 'https://econnect-io.mjc-econnect.com/';
   import { io } from "socket.io-client";
-  const URL = 'ws://localhost:8000';
+  //const URL = 'ws://localhost:8000';
   import Swal from 'sweetalert2'
 
 const ChatUiPage = () => {
