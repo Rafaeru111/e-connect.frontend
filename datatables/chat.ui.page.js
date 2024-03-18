@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-import { getMyProfile, getUsers, sendingMessage, getChat } from '../../api/global.api';
+import { getMyProfile, getUsers, sendingMessage, getChat } from '../api/global.api'
 import {
   MainContainer,
   ChatContainer,
@@ -13,8 +13,8 @@ import {
   ConversationHeader,
 
 } from "@chatscope/chat-ui-kit-react";
-import { withAuth } from '../../helpers/withAuth';
-import utils from "../../helpers/utils";
+
+import utils from "../helpers/utils";
 import { 
     Card, 
     Typography,
@@ -23,12 +23,16 @@ import {
     const { Title } = Typography;
     import { AudioOutlined } from '@ant-design/icons';
     const { Search } = Input;
-  const URL = 'https://econnect-io.mjc-econnect.com/';
+  
+
   import { io } from "socket.io-client";
   //const URL = 'ws://localhost:8000';
+  const URL = 'https://econnect-io.mjc-econnect.com/';
   import Swal from 'sweetalert2'
-
+  import { useRouter } from 'next/router';
 const ChatUiPage = () => {
+  const router = useRouter();
+
   const [chatting_user, setChatting_user] = useState([]);
   const [conversation, setConversation] = useState([]);
   const [messageInputValue, setMessageInputValue] = useState("");
@@ -36,15 +40,20 @@ const ChatUiPage = () => {
   const [getNameChat, setGetNameChat] = useState("");
   const [roomId, setRoomId]  = useState("");
   const [user, setUser] = useState({});
-
+  const [getsenderName, setSenderName] = useState("");
   let isEventListenerRegistered = false;
+
   const socket = io(URL);
 
   const fetchUserProfile = async () => {
+
+    
     try {
       const response = await getMyProfile();
       const data = await response.data;
+    	const fullname = `${data.firstName} ${data.lastName} (${data.role})`
       setUser(data);
+      setSenderName(fullname)
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
@@ -64,7 +73,7 @@ const ChatUiPage = () => {
     try {
       const response = await sendingMessage(message, reciever);
       if(response.status === 200){
-        console.log("messsage send")
+        console.log("OKs success")
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -77,74 +86,75 @@ const ChatUiPage = () => {
       const response = await getChat(reciever);
       if(response.status === 200){
         setConversation(response.data)
+   
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
   };
 
-  
   useEffect(() => {
     fetchUserProfile();
     getusers();
   }, []); 
-
   
-    const joinRoom = (room, _id) => {
+     const joinRoom = (room, name) => {
+      if(!roomId){
+        Swal.fire({
+          title: "Are you sure you want to Open Message?",
+          text: "",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, open it!",
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isConfirmed) {
 
-      Swal.fire({
-        title: "Are you sure you want to Open Message?",
-        text: "",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, open it!",
-        reverseButtons: true
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const sortedIds = [_id, user._id].sort();
-          const roomId = sortedIds.join(':');
-      
-          // Disconnect existing connection before joining a new room
-          socket.disconnect();
-      
-          // Clear any previous listeners or state related to the previous room
-          socket.off('joinRoom'); // Remove any existing 'joinRoom' event listeners
-          setRoomId(""); // Clear the room ID
-          setGetNameChat(""); // Clear the room name
-          setRoom(""); // Clear the room
-          setConversation([]); // Clear the conversation
-      
-          // Establish a new connection and join the specified room
-          socket.connect();
-          socket.emit('joinRoom', roomId);
-      
-          // Update state with new room information
-          setRoomId(roomId);
-          setGetNameChat(room);
-          setRoom(_id);
-        
-          gettingChat(_id)
+            const roomId = room
+            socket.emit('joinRoom', roomId);
 
-          Swal.fire({
-            title: "Inbox opened!",
-            text: "Your inbox opened",
-            icon: "success"
-          });
-        }
-      });
+            setRoomId(roomId);
+            setGetNameChat(name)
+            gettingChat(roomId)
+          }
+        });
+      }else{
+        Swal.fire({
+          title: "You need to Leave the Room do you want to Leave the Room?",
+          text: "",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Leave Room",
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.reload()
+            //  socket.emit('forceDisconnect');
+            //  setConversation([])
+            //setRoomId("");
+            //setGetNameChat("")
+          }
+        });
+      }
   };
 
-  // Function to handle sending the message
-  const sendMessage = (value) => {
-    send(value, getroom) 
+//   // Function to handle sending the message
+  const sendMessage =  (value) => {
+    
+   send(value, roomId) 
+
     const date = new Date();
     const dateformat = utils.convertDate(date)
 
     console.log(conversation)
+     
         const values = {
           message: value,
+          sender_name: getsenderName,
           sender: user._id,
           date:dateformat
         };
@@ -154,52 +164,9 @@ const ChatUiPage = () => {
     setMessageInputValue("")
 };
 
-// socket.on('convo', (data) => {
-//   // Handle received message
-//     const sender = data.sender
 
-//             if (sender === user._id) {
-//                 console.log("You are the Sender");
-//                     const params = {
-//                       props:{
-//                           direction: 'outgoing',
-//                           message: data.message,
-//                           position: 'single',
-//                           sender: sender,
-//                       },
-//                       footer:{
-//                           sentTime:data.date
-//                       }
-//                   };
-
-//                   setConversation((conversation) => [...conversation, params]);
-                
-
-//             } else {
-//               console.log("You are the reciever");
-//                 const params = {
-//                   props:{
-//                       direction: 'incoming',
-//                       message: data.message,
-//                       position: 'single',
-//                       sender: sender,
-//                   },
-//                   footer:{
-//                       sentTime:data.date
-//                   }
-//               };
-
-//               setConversation((conversation) => [...conversation, params]);
-       
-  
-//             }
-
-
-// });
-
-socket.on('convo', (data) => {
+socket.on("convo", (data) => {
   const sender = data.sender;
-
   const newMessage = {
       props: {
           direction: sender === user._id ? 'outgoing' : 'incoming',
@@ -207,20 +174,18 @@ socket.on('convo', (data) => {
           position: 'single',
           sender: sender,
       },
+      header:{
+        sender:data.sender_name,
+      },
       footer: {
           sentTime: data.date
       }
   };
 
-  // Check if the new message already exists in the conversation array
   const exists = conversation.some(msg => {
-      // Check if the messages have the same content
       const sameContent = msg.props.message === newMessage.props.message;
-      // Check if the messages have the same sender
       const sameSender = msg.props.sender === newMessage.props.sender;
-      // Check if the messages were sent at the same time
       const sameTime = msg.footer.sentTime === newMessage.footer.sentTime;
-
       return sameContent && sameSender && sameTime;
   });
 
@@ -244,7 +209,7 @@ const [searchTerm, setSearchTerm] = useState('');
     <Card bordered={true} style={{borderRadius: 0}}>
           <Divider orientation="left">
             <Title level={3} >
-              CHAT SUPPORT - User Name: {user.firstName}  {user.lastName}
+              CHAT SUPPORT - Admin Name: {user.firstName}  {user.lastName}
             </Title>
           </Divider>
        
@@ -277,7 +242,7 @@ const [searchTerm, setSearchTerm] = useState('');
                         info={user.info}
                         lastSenderName={user.lastSenderName}
                         name={user.name}
-                        onClick={() => joinRoom(user.name, user._id)}
+                        onClick={() => joinRoom(user._id, user.name)}
                     />
                 ))}
             </ConversationList>
@@ -296,7 +261,9 @@ const [searchTerm, setSearchTerm] = useState('');
       <MessageList>
 
       {conversation.map((conv, index) => (
+        
             <Message key={index} model={conv.props}>
+               <Message.Header sender={conv.header.sender}/>
                 <Message.Footer sentTime={conv.footer.sentTime} />
             </Message>
         ))}
@@ -316,4 +283,4 @@ const [searchTerm, setSearchTerm] = useState('');
   )
 }
 
-export default withAuth(ChatUiPage)
+export default ChatUiPage

@@ -84,7 +84,7 @@ const items = [
   //   getItem("Password", "/password"),
   // ]),
 
-  getItem("Customer Service", "/pagers/chat.ui.page", <MessageOutlined />),
+  //getItem("Customer Service", "/pagers/chat.ui.page", <MessageOutlined />),
 
   getItem("Logout", "/logout", <LogoutOutlined />),
 ];

@@ -45,9 +45,9 @@ export const getMyProfile = async () => {
 };
 
 
-export const getUsers = async (key) => {
+export const getUsers = async () => {
   return axios
-    .get("/api/profile/get-users",{key})
+    .get("/api/conversation/get-users")
     .then((res) => {
       return res;
     })
@@ -57,9 +57,9 @@ export const getUsers = async (key) => {
 };
 
 
-export const sendingMessage = async (message, reciever) => {
+export const sendingMessage = async (message, groupId) => {
   return axios
-    .post("/api/conversation/send-message",{message, reciever})
+    .post("/api/conversation/send-message",{message, groupId})
     .then((res) => {
       return res;
     })
@@ -69,9 +69,9 @@ export const sendingMessage = async (message, reciever) => {
 };
 
 
-export const getChat = async (reciever) => {
+export const getChat = async (groupId) => {
   return axios
-    .get(`/api/conversation/get-my-convos?reciever=${reciever}`)
+    .get(`/api/conversation/get-my-convos?groupId=${groupId}`)
     .then((res) => {
       return res;
     })

@@ -48,7 +48,7 @@ import Property_Type from './pagers/property/property_type.page'
 //-----------------| Client's Application |-----------------------------------
 import Application_Page from './pagers/appointment/application.page'
 
-import ChatUiPage from './pagers/chat.ui.page';
+//import ChatUiPage from './pagers/chat.ui.page';
 
 const Home = () => {
   const router = useRouter();
@@ -144,12 +144,13 @@ const handleMenuSelect = (key) => {
   <Sidebar onSelect={handleMenuSelect} selectedKey={selectedKey} />
 
    <Layout>
-    <HeaderNav />
+   
      <Content
        style={{
          margin: '0 16px',
        }}
      >
+       <HeaderNav />
        <div
          style={{
            padding: 15,
@@ -189,7 +190,7 @@ const handleMenuSelect = (key) => {
               {/* Client Application */}
               {selectedKey === '/pagers/appointment/application.page' && <Application_Page />}
 
-              {selectedKey === '/pagers/chat.ui.page' && <ChatUiPage />}
+              {/* {selectedKey === '/pagers/chat.ui.page' && <ChatUiPage />} */}
               
             <FloatButton.BackTop  style={{color:"black", border:"solid black 1px"}}/>
           </div>
