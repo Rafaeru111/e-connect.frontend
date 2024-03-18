@@ -122,8 +122,8 @@ const ChatUiPage = () => {
         });
       }else{
         Swal.fire({
-          title: "You need to Leave the Room do you want to Leave the Room?",
-          text: "",
+          title: "You need to Leave the Room",
+          text: "Do you want to Leave the Room?",
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",

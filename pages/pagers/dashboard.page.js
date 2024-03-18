@@ -153,18 +153,6 @@ const  Dashboard = ({ type, data }) => {
   };
 
 
-  // const fetchData = async () => {
-  //   try {
-
-  //   } catch (error) {
-  //     console.error('Error fetching recent activity:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-   
-  //   fetchData();
-  // }, []);
 
 
   useEffect(() => {
