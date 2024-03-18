@@ -231,7 +231,7 @@ const formatter2 = (value) =>
         <Col span={6}> 
           <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Appointment Today"
+              title="Appointment this Month"
               value={45}
               //formatter={formatter}
             />
@@ -239,7 +239,7 @@ const formatter2 = (value) =>
         <Col span={6}> 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Appointments this Month"
+              title="Visitation this Month"
               value={23}
               //formatter={formatter}
             />
@@ -247,7 +247,7 @@ const formatter2 = (value) =>
         <Col span={6} > 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Visitation Today"
+              title="Billed Users this Month"
               value={99}
               //formatter={formatter}
             />
@@ -255,7 +255,7 @@ const formatter2 = (value) =>
         <Col span={6} > 
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Total Visit this Month"
+              title="Not-Billed Users this Month"
               value={0}
               formatter={formatter2}
             />

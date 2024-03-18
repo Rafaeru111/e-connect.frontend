@@ -6,7 +6,8 @@ import axios from "axios";
 //baseURL: `https://econnect-api.mjc-econnect.com/`,
 let instance = axios.create({
     
-  baseURL: `http://localhost:3000/`,
+  //baseURL: `http://localhost:3000/`,
+  baseURL: `https://econnect-api.mjc-econnect.com/`,
     timeout: 30000,
     headers: {
       "Content-Type": "application/json",
