@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-// import { 
-//   getRecentActivity,
-//   getTodayMonthlyYearly,
-//   getTodayData,
-// } from "../../api/global.api";
+import { 
+  getDashboard,
+  getVisitorsToday
+} from "../../api/global.api";
 import { 
   Statistic, 
   Row, 
@@ -52,69 +51,57 @@ const  Dashboard = ({ type, data }) => {
   //const [rfqData, setRfqData] = useState({});
   const [recentData, setRecentData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [boxdashboard, setBoxdashboard] = useState({});
+  const [userRow, setUserRow] = useState([]);
+  const actionColumn = [
+     
+    {
+        dataIndex: "reference_code",
+        title: "Reference Code",
+        key: "reference_code",
+    },
+    {
+      dataIndex: "client_id",
+      title: "Client Id",
+      key: "client_id",
+      render: (client_id) => {
+        const category = clientDrop.find((cat) => cat._id === client_id);
+        const categoryName = category ? category.fullName : "";
+        return <span>{categoryName}</span>;
+      },
+  },
+  {
+    dataIndex: "property_id",
+    title: "Property Id",
+    key: "property_id",
+    render: (property_id) => {
+      const category = propertyDrop.find((cat) => cat._id === property_id);
+      const categoryName = category ? category.propertyName : "";
+      return <span>{categoryName}</span>;
+    },
+},
 
-  // const actionColumn = [
+{
+  dataIndex: "visit_date",
+  title: "Visit Date",
+  key: "visit_date",
+  render: (visit_date) => {
+    const date = new Date(visit_date);
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
 
-  //   {
-  //     dataIndex: "transactionNumber",
-  //     title: "Transaction Number",
-  //     key: "transactionNumber",
-  //   },
+    return <span>{date.toLocaleString(undefined, options)}</span>;
 
-  //   {
-  //     dataIndex: "total",
-  //     title: "Total Sale",
-  //     key: "total",
-  //   },
+  },
+}
+];
 
-  //     {
-  //       dataIndex: "payment_method",
-  //       title: "Payment Method",
-  //       key: "payment_method",
-  //     },
-      
-  //     {
-  //       dataIndex: "staffId",
-  //       title: "Staff",
-  //       key: "staffId",
-  //     },
-  
-  //     {
-  //       dataIndex: "action",
-  //       title: "Action",
-  //       width: 150,
-  //       key: "_id",
-  //       render: (_, params) => {
-  //         return (
-  //           <Space direction="horizontal" align="center">
-              
-  //             <Button
-  //               size="large"
-  //               shape="circle"
-  //               onClick={() => {
-  //                 handleView(params._id);
-  //               }}
-  //             >
-  //                 <EyeOutlined  style={{color:'green'}} />
-  //             </Button>
-
-  //             <Button
-  //               size="large"
-  //               shape="circle"
-  //               onClick={() => {
-  //                 handleView(params._id);
-  //               }}
-  //               tooltip="void"
-  //             >    
-  //                 <CloseCircleOutlined  style={{color:'red'}} />
-  //             </Button>
-
-        
-  //           </Space>
-  //         );
-  //       },
-  //     },  
-  // ];
 
 
   const getListData = (value) => {
@@ -152,14 +139,40 @@ const  Dashboard = ({ type, data }) => {
     }
   };
 
+ const getboxData = async() =>{
+    try {
+      const response = await getDashboard();
+      const data = await response.data;
+      setBoxdashboard(data);
+      setLoading(false);
+    } catch (error) {
 
+      setLoading(false);
+    }
+ }
 
+ const getvisitData = async() =>{
+  try {
+    const response = await getVisitorsToday();
+    const data = await response.data;
+    setUserRow(data);
+    setLoading(false);
+  } catch (error) {
+
+    setLoading(false);
+  }
+}
+
+ 
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 5); // Adjust the timeout value as needed
-  
+    
+    getboxData()
+    getvisitData()
+
     return () => clearTimeout(timeout);
   }, []);
 
@@ -231,8 +244,8 @@ const formatter2 = (value) =>
         <Col span={6}> 
           <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
-              title="Appointment this Month"
-              value={45}
+              title="All Users"
+              value={boxdashboard.all_user}
               //formatter={formatter}
             />
           </Card></Col>
@@ -240,7 +253,7 @@ const formatter2 = (value) =>
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
               title="Visitation this Month"
-              value={23}
+              value={boxdashboard.all_visit}
               //formatter={formatter}
             />
           </Card></Col>
@@ -248,7 +261,7 @@ const formatter2 = (value) =>
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
               title="Billed Users this Month"
-              value={99}
+              value={boxdashboard.billed}
               //formatter={formatter}
             />
           </Card></Col>
@@ -256,8 +269,8 @@ const formatter2 = (value) =>
         <Card bordered={true} style={{borderRadius: 0}}>
             <Statistic
               title="Not-Billed Users this Month"
-              value={0}
-              formatter={formatter2}
+              value={boxdashboard.notBilled}
+             
             />
           </Card>
           </Col>
@@ -286,9 +299,9 @@ const formatter2 = (value) =>
           <Card bordered={false} title={"Date Today: " + utils.convertDate(DateToday)} style={{borderRadius: 0}}>
               <Table
                     style={{width: "100%"}}
-                    //columns={actionColumn}
-                    //dataSource={getTransacToday}
-                    //pagination={{ pageSize: 5, position:"bottomCenter" }}
+                    columns={actionColumn}
+                    dataSource={userRow}
+                    pagination={{ pageSize: 5, position:"bottomCenter" }}
                     rowKey="_id"
                 />
             </Card>
@@ -298,11 +311,11 @@ const formatter2 = (value) =>
     {/* <Divider /> */}
     {/* <Spin spinning={true} size="large" indicator={{ fontSize: 44,}} tip="Under Construction! "> */}
   
-    <Row style={{  padding: 10, borderRadius: 0,  background:"white", width:"100%", marginTop: '10px' }} >
+    {/* <Row style={{  padding: 10, borderRadius: 0,  background:"white", width:"100%", marginTop: '10px' }} >
       <Col span={24}>    
      <Inventory_Line />
       </Col>
-    </Row>
+    </Row> */}
 
     {/* </Spin> */}
     {/* It should be dynamic i checks if there are may workers */}

@@ -81,6 +81,53 @@ export const getChat = async (groupId) => {
 };
 
 
+export const getDashboard = async () => {
+  return axios
+    .get(`/api/profile/get-dashboard`)
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+
+export const getVisitorsToday = async () => {
+  return axios
+    .get(`/api/visit_appointment/get-only-today`)
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+export const getBarData = async () => {
+  return axios
+    .get(`/api/visit_appointment/get-weekly-data`)
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+export const getPopData = async () => {
+  return axios
+    .get(`/api/viewed_properties/get-top-five-for-admin`)
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+
+
 
 // this service is used for upload
 
