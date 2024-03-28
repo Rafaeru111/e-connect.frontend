@@ -726,7 +726,7 @@ const convertClientId = (id) =>{
                     <Col span={12}>
                         <b> Reference Code:</b>   <br/>
                      
-                           {convertId(viewData?.reference_code)}
+                        {viewData?.reference_code}
                     </Col>
 
               </Row> <br/>

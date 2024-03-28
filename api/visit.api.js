@@ -154,3 +154,14 @@ import axios from "../helpers/axios"
           return err.response;
         });
     };
+
+    export const tryVerify = async (reference_code) => {
+      return axios
+        .patch("/api/visit_appointment/verify-visit", {reference_code})
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          return err.response;
+        });
+    };

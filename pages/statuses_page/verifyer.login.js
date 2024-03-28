@@ -5,11 +5,8 @@ import useUserStore from "../../store/user.store";
 
 import {
   login,
-  resendOtp,
-  otp,
-
 } from "../../api/login.api";
-import { Loadersplash } from "../../helpers/splash";
+
 import {
   ArrowLeftOutlined,
   UserOutlined,
@@ -48,7 +45,6 @@ import {
   InputNumber} from 'antd';
 import Swal from 'sweetalert2'
 
-// import { loginUserPin } from "../../api/login.api";
 
 export default function Login() {
   const [loading, setLoading] = useState(true);
@@ -62,8 +58,6 @@ export default function Login() {
   // useEffect(() => {
     const [handleLoading, setHandleLoading] = useState(false);
   // }, []);
-
-  
 
 //useState 
 
@@ -96,7 +90,7 @@ export default function Login() {
                 console.log(response);
                 setUserData(response.data.data.userData);
                 setLoggedIn();
-                router.push('/');
+                router.push('/statuses_page/well_done.page');
          
     } else {
       Swal.fire({
@@ -110,29 +104,6 @@ export default function Login() {
   
   };
 
-  // const handleOtp = async (value) => {
-    
-  //   const response = await otp(value.otp);
-  //   if (response.code === 200 || response.data?.success === true) {
-  //         localStorage.setItem("token", response.data.data.token);
-  //         localStorage.setItem("selectedKey", "/pagers/dashboard.page");
-  //         console.log(response);
-  //         setUserData(response.data.data.userData);
-  //         setLoggedIn();
-  //         router.push('/');
-  //   } 
-    
-  //   else {
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Oops...",
-  //       text: response.data.message,
-  //     });
-  //     setHandleLoading(false)
-  //   }
-  // };
-
-  //-----------------------resend code timeout
   useEffect(() => {
     let interval;
     if (isDisabled && timer > 0) {
@@ -150,6 +121,7 @@ export default function Login() {
       setIsDisabled(false);
     }
   }, [timer]);
+
 //------------------------|Disable the Timer|--------------------------
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -165,95 +137,7 @@ export default function Login() {
     const token = localStorage.getItem('token');
     //restrict the user if logged in na sya restric na makapunta sa login
     if (token) {
-      router.push('/');
-    }
-    if (loading) {
-      return <Loadersplash/>;
-    }
-  };
-
-  if (loading) {
-    return <Loadersplash/>;
-  }
-
-//-------------------- |handle Go back to Login| ----------------------------------
-
-  const goBack = async () => {
-    try {
-      const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: "deleteButton1",
-          cancelButton: "veiwButton1",
-        },
-        buttonsStyling: true,
-      });
-
-      const result = await swalWithBootstrapButtons.fire({
-        title: "Are you sure?",
-        text: "You want to Go Back to Login?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Go Back to Login",
-        cancelButtonText: "Cancel",
-        reverseButtons: true,
-      });
-
-      if (result.isConfirmed) {
-            setUserName('')
-            setPassword('')
-            setisLoged(false)
-
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        swalWithBootstrapButtons.fire("Cancelled", "", "");
-      }
-    } catch (error) {
-      console.error(error);
-    }
- 
-  }
-
-
-  //-------------------- |handle resend Code| ----------------------------------
-
-  const handleResendCode = async () => {
-    try {
-      const thisemail = email
-
-      const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: "deleteButton1",
-          cancelButton: "veiwButton1",
-        },
-        buttonsStyling: true,
-      });
-
-      const result = await swalWithBootstrapButtons.fire({
-        title: "Are you sure?",
-        text: "You want to Resend the verification Code? to " + thisemail + "?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Resend",
-        cancelButtonText: "Cancel",
-        reverseButtons: true,
-      });
-
-      if (result.isConfirmed) {
-        // Make the axios delete request
-          const response = await resendOtp(thisemail);
-            if (response.status === 200) {
-              setIsDisabled(true);
-              setTimer(30);  
-              swalWithBootstrapButtons.fire(
-                "Verification code resent successfully.",
-                "Check your email or phone.",
-                "success"
-              );
-        }
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        swalWithBootstrapButtons.fire("Cancelled", "Done", "error");
-      }
-    } catch (error) {
-      console.error(error);
+      router.push('/statuses_page/well_done.page');
     }
   };
 
@@ -264,7 +148,7 @@ export default function Login() {
       <Card style={{ margin: 'auto', maxWidth: '600px', marginTop:"150px"}}>
         
         <Divider>  <h1 style={{textAlign:"center"}}>
-          Login to E-Connect
+         E-Connect Verifyer
         </h1></Divider>
         <Row gutter={[8,8]}>
             <Col span={10}>
@@ -306,11 +190,6 @@ export default function Login() {
                           iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                         />
                       </Form.Item>
-                      {/* <Form.Item>
-                        <a className="login-form-forgot" href="">
-                          Forgot password
-                        </a>
-                      </Form.Item> */}
                       <Form.Item>
                         <Row>
                           <Col span={24}>
@@ -318,12 +197,6 @@ export default function Login() {
                               Log in 
                             </Button>
                           </Col>
-                         {/* <Divider>
-                            or
-                          </Divider>
-                          <Col span={24} style={{textAlign: "center"}}>
-                            <a href="">Register now!</a>
-                          </Col> */}
                         </Row>
                       </Form.Item>
                   </Form>

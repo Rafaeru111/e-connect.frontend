@@ -41,7 +41,8 @@ import {
     Upload,
     Image,
     Card,
-    DatePicker
+    DatePicker,
+    QRCode
   } from "antd";
 
   import ImgCrop from 'antd-img-crop';
@@ -726,7 +727,7 @@ const convertClientId = (id) =>{
                     <Col span={12}>
                         <b> Reference Code:</b>   <br/>
                      
-                           {convertId(viewData?.reference_code)}
+                           {viewData?.reference_code}
                     </Col>
 
               </Row> <br/>
@@ -755,6 +756,14 @@ const convertClientId = (id) =>{
                     </Col>
                   
                      
+              </Row>
+                    <br/>
+
+              <Row gutter={16}>
+                    <Col span={24}>
+                        <b>QR</b>   <br/>
+                        <QRCode value={viewData?.visit_qr_link} bgColor="#fff" style={{ marginBottom: 16 }} />
+                    </Col>                    
               </Row>
             </Modal>
 
